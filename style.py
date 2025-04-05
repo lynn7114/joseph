@@ -18,23 +18,41 @@ def set_background(image_file):
         unsafe_allow_html=True
     )
 
-def set_custom_font(font_file, font_family):
-    with open(font_file, "rb") as f:
-        encoded_font = base64.b64encode(f.read()).decode()
+def set_custom_fonts(bold_font_file, bold_font_name, regular_font_file, regular_font_name):
+    with open(bold_font_file, "rb") as f1:
+        bold_encoded = base64.b64encode(f1.read()).decode()
+
+    with open(regular_font_file, "rb") as f2:
+        regular_encoded = base64.b64encode(f2.read()).decode()
 
     st.markdown(
         f"""
         <style>
+        /* Bold 폰트 */
         @font-face {{
-            font-family: '{font_family}';
-            src: url(data:font/ttf;base64,{encoded_font}) format('truetype');
+            font-family: '{bold_font_name}';
+            src: url(data:font/ttf;base64,{bold_encoded}) format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }}
+
+        /* Regular 폰트 */
+        @font-face {{
+            font-family: '{regular_font_name}';
+            src: url(data:font/ttf;base64,{regular_encoded}) format('truetype');
             font-weight: normal;
             font-style: normal;
         }}
 
+        /* 전체 텍스트 기본은 Regular */
         html, body, .stApp {{
-            font-family: '{font_family}', sans-serif;
-            color: black; /* 글씨 색깔 검정 */
+            font-family: '{regular_font_name}', sans-serif;
+            color: black;
+        }}
+
+        /* 제목은 Bold 폰트 적용 */
+        h1, h2, h3 {{
+            font-family: '{bold_font_name}', sans-serif;
         }}
         </style>
         """,
