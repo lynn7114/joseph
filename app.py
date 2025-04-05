@@ -15,7 +15,7 @@ st.markdown(
     div.stButton > button {
         font-family: 'NanumBarunpenR', sans-serif;
         color: black !important;
-        background-color: #85c1e9 !important;  /* 하늘색 배경 */
+        background-color: #85c1e9 !important;
         border: none;
         padding: 0.5em 1em;
         border-radius: 8px;
@@ -23,12 +23,12 @@ st.markdown(
     }
 
     div.stButton > button:hover {
-        background-color: #aed6f1 !important;  /* 더 연한 하늘색 */
+        background-color: #aed6f1 !important;
         color: black !important;
     }
 
     div.stButton > button:active {
-        background-color: #d6eaf8 !important;  /* 클릭 시 가장 연한 하늘색 */
+        background-color: #d6eaf8 !important;
         color: black !important;
     }
     </style>
@@ -36,9 +36,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 st.markdown(
     f"""
     <h1 style='
@@ -59,12 +58,7 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "기출문제를 입력해주시면 변형 문제를 만들어드릴게요!"}
     ]
 
-# 세션 상태에 누적된 기출문제 저장용 리스트 초기화
-if "past_questions" not in st.session_state:
-    st.session_state["past_questions"] = []
-
-# 업로드 및 개수 입력
-# 스타일 먼저 적용
+# 업로드 3개 항목 스타일 설정
 st.markdown(
     """
     <style>
@@ -86,7 +80,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 업로드 3개 항목
+# 업로드 박스 3개
 st.markdown('<div class="custom-title">📘 교과서 업로드</div>', unsafe_allow_html=True)
 with st.container():
     textbook_file = st.file_uploader("", type=["txt"], key="textbook", label_visibility="collapsed")
@@ -99,28 +93,14 @@ st.markdown('<div class="custom-title">📙 기출문제 업로드</div>', unsaf
 with st.container():
     past_file = st.file_uploader("", type=["txt"], key="past", label_visibility="collapsed")
 
-num_questions = st.number_input("몇 개의 변형 문제를 만들까요?", min_value=1, max_value=100, value=10)
-
-num_questions = st.number_input("몇 개의 변형 문제를 만들까요?", min_value=1, max_value=100, value=10)
-
-st.markdown("""
-    <style>
-    div.stButton > button {
-        background-color: white;
-        color: black;
-        border: 2px solid black;
-        border-radius: 8px;
-        padding: 10px 24px;
-        font-family: 'NanumBarunpenR';
-        font-size: 18px;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        background-color: #add8e6;
-        color: black;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# 중복 방지를 위해 key 지정
+num_questions = st.number_input(
+    "몇 개의 변형 문제를 만들까요?",
+    min_value=1,
+    max_value=100,
+    value=10,
+    key="num_questions_input"
+)
 
 # 변형문제 생성 버튼
 if st.button("변형 문제 생성하기"):
@@ -156,4 +136,3 @@ if st.button("변형 문제 생성하기"):
             st.write(result)
 
             st.download_button("변형 문제 다운로드", result, file_name="변형문제.txt")
-
