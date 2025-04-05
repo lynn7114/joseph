@@ -4,7 +4,7 @@ from openai import OpenAI
 import streamlit as st
 from dotenv import load_dotenv
 from style import set_background
-from style import set_custom_font
+from style import set_custom_fonts
 
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
