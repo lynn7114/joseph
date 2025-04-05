@@ -12,7 +12,6 @@ set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "
 st.markdown(
     """
     <style>
-    /* 기본 버튼 스타일 */
     div.stButton > button {
         font-family: 'NanumBarunpenR', sans-serif;
         color: black !important;
@@ -23,22 +22,21 @@ st.markdown(
         transition: 0.3s;
     }
 
-    /* hover 시 */
     div.stButton > button:hover {
-        background-color: #e0e0e0;
+        background-color: #d0ebff; /* 연하늘색 */
         color: black !important;
-        border-color: #888;
+        border-color: #7ec0ee;
     }
 
-    /* 클릭했을 때도 배경 유지 */
     div.stButton > button:active {
-        background-color: #d0d0d0 !important;
+        background-color: #a5d8ff !important;  /* 더 진한 하늘색 */
         color: black !important;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 st.markdown(
