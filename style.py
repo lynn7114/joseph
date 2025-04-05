@@ -1,12 +1,19 @@
 import streamlit as st
-
-def set_background():
-    st.markdown("""
+//anthony-delanoix-urUdKCxsTUI-unsplash.jpg
+def set_background(image_file):
+    with open(image_file, "rb") as f:
+        data = f.read()
+    encoded = f"data:image/png;base64,{data.encode('base64').decode()}"
+    st.markdown(
+        f"""
         <style>
-        body {
-            background-image: url("https://images.unsplash.com/photo-...");
+        .stApp {{
+            background-image: url("{encoded}");
             background-size: cover;
-            background-attachment: fixed;
-        }
+            background-position: center;
+            background-repeat: no-repeat;
+        }}
         </style>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
