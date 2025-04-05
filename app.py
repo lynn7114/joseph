@@ -3,6 +3,9 @@ import os
 from openai import OpenAI
 import streamlit as st
 from dotenv import load_dotenv
+from style import set_background
+
+set_background()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 st.title("영어 변형 문제")
