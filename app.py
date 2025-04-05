@@ -5,7 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from style import set_background
 
-set_background()
+set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 st.title("영어 변형 문제")
