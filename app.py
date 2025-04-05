@@ -38,6 +38,25 @@ if "past_questions" not in st.session_state:
 uploaded_file = st.file_uploader("기출문제 파일을 업로드하세요 (.txt)", type=["txt"])
 num_questions = st.number_input("몇 개의 변형 문제를 만들까요?", min_value=1, max_value=100, value=10)
 
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: white;
+        color: black;
+        border: 2px solid black;
+        border-radius: 8px;
+        padding: 10px 24px;
+        font-family: 'NanumBarunpenR';
+        font-size: 18px;
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        background-color: black;
+        color: white;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # 버튼 눌렀을 때 처리
 if st.button("기출문제 추가하기") and uploaded_file:
     input_text = uploaded_file.read().decode("utf-8")
