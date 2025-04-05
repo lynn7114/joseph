@@ -93,14 +93,31 @@ st.markdown('<div class="custom-title">📙 기출문제 업로드</div>', unsaf
 with st.container():
     past_file = st.file_uploader("", type=["txt"], key="past", label_visibility="collapsed")
 
-# 중복 방지를 위해 key 지정
-num_questions = st.number_input(
-    "몇 개의 변형 문제를 만들까요?",
-    min_value=1,
-    max_value=100,
-    value=10,
-    key="num_questions_input"
+st.markdown(
+    """
+    <style>
+    .custom-input-title {
+        font-family: 'NanumBarunpenB', sans-serif;
+        font-size: 28px;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        color: black;
+    }
+    .custom-input-box {
+        background-color: rgba(255, 255, 255, 0.6);
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
+
+st.markdown('<div class="custom-input-title">📝 몇 개의 변형 문제를 만들까요?</div>', unsafe_allow_html=True)
+with st.container():
+    num_questions = st.number_input("", min_value=1, max_value=100, value=10, key="num_questions", label_visibility="collapsed")
+
 
 # 변형문제 생성 버튼
 if st.button("변형 문제 생성하기"):
