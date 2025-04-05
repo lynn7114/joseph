@@ -64,7 +64,43 @@ if "past_questions" not in st.session_state:
     st.session_state["past_questions"] = []
 
 # 업로드 및 개수 입력
-uploaded_file = st.file_uploader("기출문제 파일을 업로드하세요 (.txt)", type=["txt"])
+# 스타일 먼저 적용
+st.markdown(
+    """
+    <style>
+    .custom-title {
+        font-family: 'NanumBarunpenB', sans-serif;
+        font-size: 28px;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        color: black;
+    }
+    .upload-box {
+        background-color: rgba(255, 255, 255, 0.6);
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# 업로드 3개 항목
+st.markdown('<div class="custom-title">📘 교과서 업로드</div>', unsafe_allow_html=True)
+with st.container():
+    textbook_file = st.file_uploader("", type=["txt"], key="textbook", label_visibility="collapsed")
+
+st.markdown('<div class="custom-title">📗 모의고사 업로드</div>', unsafe_allow_html=True)
+with st.container():
+    mock_file = st.file_uploader("", type=["txt"], key="mock", label_visibility="collapsed")
+
+st.markdown('<div class="custom-title">📙 기출문제 업로드</div>', unsafe_allow_html=True)
+with st.container():
+    past_file = st.file_uploader("", type=["txt"], key="past", label_visibility="collapsed")
+
+num_questions = st.number_input("몇 개의 변형 문제를 만들까요?", min_value=1, max_value=100, value=10)
+
 num_questions = st.number_input("몇 개의 변형 문제를 만들까요?", min_value=1, max_value=100, value=10)
 
 st.markdown("""
@@ -80,39 +116,41 @@ st.markdown("""
         transition: 0.3s;
     }
     div.stButton > button:hover {
-        background-color: black;
-        color: white;
+        background-color: #add8e6;
+        color: black;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 버튼 눌렀을 때 처리
-if st.button("기출문제 추가하기") and uploaded_file:
-    input_text = uploaded_file.read().decode("utf-8")
-    st.session_state["past_questions"].append(input_text)
-    st.success("기출문제가 저장되었습니다!")
-
-# 현재까지 저장된 기출문제 보기
-if st.session_state["past_questions"]:
-    st.markdown("### 🧾 누적된 기출문제")
-    for i, qset in enumerate(st.session_state["past_questions"], 1):
-        st.markdown(f"**{i}.**\n```\n{qset.strip()}\n```")
-
-# 변형문제 생성
+# 변형문제 생성 버튼
 if st.button("변형 문제 생성하기"):
-    if not st.session_state["past_questions"]:
-        st.warning("먼저 기출문제를 업로드해 주세요.")
+    if not (textbook_file and mock_file and past_file):
+        st.warning("모든 파일을 업로드해주세요.")
     else:
-        # 모든 기출문제 합치기
-        full_context = "\n".join(st.session_state["past_questions"])
-        with st.spinner("GPT가 문제를 만들고 있어요..."):
+        textbook_text = textbook_file.read().decode("utf-8")
+        mock_text = mock_file.read().decode("utf-8")
+        past_text = past_file.read().decode("utf-8")
+
+        context = f"""
+        교과서 내용:
+{textbook_text}
+
+        모의고사 내용:
+{mock_text}
+
+        기출문제:
+{past_text}
+        """
+
+        with st.spinner("GPT가 변형 문제를 생성 중입니다..."):
             response = openai.ChatCompletion.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "너는 영어 기출문제를 바탕으로 변형 문제를 만들어주는 전문가야."},
-                    {"role": "user", "content": f"이전까지 업로드된 기출문제를 바탕으로 {num_questions}개의 변형 문제를 만들어줘:\n\n{full_context}"}
+                    {"role": "system", "content": "너는 영어 기출문제를 바탕으로 변형 문제를 만들어주는 전문가야. 기출문제가 교과서와 모의고사를 바탕으로 만들어졌음을 고려해 변형 문제를 출제해줘."},
+                    {"role": "user", "content": f"아래의 자료들을 참고해서 {num_questions}개의 변형 문제를 만들어줘:\n\n{context}"}
                 ]
             )
+
             result = response.choices[0].message.content
             st.success("변형 문제가 생성되었습니다!")
             st.write(result)
