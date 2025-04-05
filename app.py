@@ -5,6 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from style import set_background
 from style import set_custom_fonts
+from separate import separate_passages_and_choices
 
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
