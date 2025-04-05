@@ -9,6 +9,18 @@ from style import set_custom_fonts
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
 
+# 버튼에 폰트 적용
+st.markdown(
+    """
+    <style>
+    div.stButton > button {
+        font-family: 'NanumBarunpenR', sans-serif;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 st.markdown(
     f"""
