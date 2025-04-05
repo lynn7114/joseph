@@ -1,5 +1,5 @@
 import streamlit as st
-//anthony-delanoix-urUdKCxsTUI-unsplash.jpg
+
 def set_background(image_file):
     with open(image_file, "rb") as f:
         data = f.read()
