@@ -7,8 +7,7 @@ from style import set_background
 from style import set_custom_font
 
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
-set_custom_font("NanumBarunpenB.ttf", "NanumBarunpenB")
-set_custom_font("NanumBarunpenR.ttf", "NanumBarunpenR")
+set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 st.title("영어 변형 문제")
