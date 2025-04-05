@@ -15,27 +15,27 @@ st.markdown(
     div.stButton > button {
         font-family: 'NanumBarunpenR', sans-serif;
         color: black !important;
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
+        background-color: #85c1e9 !important;  /* 하늘색 배경 */
+        border: none;
         padding: 0.5em 1em;
         border-radius: 8px;
         transition: 0.3s;
     }
 
     div.stButton > button:hover {
-        background-color: #d0ebff; /* 연하늘색 */
+        background-color: #aed6f1 !important;  /* 더 연한 하늘색 */
         color: black !important;
-        border-color: #7ec0ee;
     }
 
     div.stButton > button:active {
-        background-color: #a5d8ff !important;  /* 더 진한 하늘색 */
+        background-color: #d6eaf8 !important;  /* 클릭 시 가장 연한 하늘색 */
         color: black !important;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
