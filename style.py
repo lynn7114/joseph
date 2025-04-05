@@ -18,9 +18,6 @@ def set_background(image_file):
         unsafe_allow_html=True
     )
 
-import base64
-import streamlit as st
-
 def set_custom_fonts(bold_font_file, bold_font_name, regular_font_file, regular_font_name):
     with open(bold_font_file, "rb") as f1:
         bold_encoded = base64.b64encode(f1.read()).decode()
