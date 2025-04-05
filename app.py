@@ -10,7 +10,18 @@ set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-st.title("영어 변형 문제")
+st.markdown(
+    f"""
+    <h1 style='
+        font-family: NanumBarunpenB;
+        font-size: 48px;
+        color: black;
+        text-align: center;
+        margin-bottom: 30px;
+    '>영어 변형 문제</h1>
+    """,
+    unsafe_allow_html=True
+)
 
 # 세션 상태 초기화
 if "messages" not in st.session_state:
