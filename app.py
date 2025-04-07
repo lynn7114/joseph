@@ -85,6 +85,57 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+with tab1:
+    st.markdown("### 📘 단어 문제 생성")
+
+    vocab_file = st.file_uploader("단어 PDF 업로드", type=["pdf"], key="vocab_word")
+    primary_file = st.file_uploader("초등 문제지 업로드", type=["docx"], key="primary_word")
+
+    if vocab_file:
+        from separate import extract_vocab_from_pdf
+        vocab_data = extract_vocab_from_pdf(vocab_file)
+
+        unit_list = list(vocab_data.keys())
+        selected_unit = st.selectbox("🗂️ Unit을 선택하세요", unit_list)
+
+    if st.button("📗 단어 문제 생성하기"):
+        if not (vocab_file and primary_file):
+            st.warning("단어 PDF와 초등 문제지를 모두 업로드해주세요.")
+        else:
+            from docx import Document
+            doc = Document(primary_file)
+            primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
+
+            context = f"""
+            [예시 형식]
+            {primary_example}
+
+            [단어 리스트 - {selected_unit}]
+            {json.dumps(vocab_data[selected_unit], ensure_ascii=False, indent=2)}
+            """
+
+            prompt = (
+                "너는 초등 영어 단어 문제를 만드는 선생님이야. "
+                "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
+                "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
+            )
+
+            with st.spinner("GPT가 단어 문제를 생성 중입니다..."):
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": prompt},
+                        {"role": "user", "content": context}
+                    ]
+                )
+
+                result = response.choices[0].message.content
+                st.success("✅ 단어 문제가 생성되었습니다!")
+                st.write(result)
+                st.download_button("📥 단어 문제 다운로드", result, file_name=f"{selected_unit}_문제_생성결과.txt")
+'''
+
+
 # 업로드 박스 3개
 st.markdown('<div class="custom-title">📘 교과서 업로드</div>', unsafe_allow_html=True)
 with st.container():
@@ -240,3 +291,4 @@ if st.button("변형 문제 생성하기"):
             st.write(result)
 
             st.download_button("변형 문제 다운로드", result, file_name="변형문제.txt")
+'''
