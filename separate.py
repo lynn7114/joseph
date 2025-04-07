@@ -76,3 +76,12 @@ def parse_primary_level_questions(text: str):
             "choices": parsed_choices
         })
     return problems
+
+def extract_text_from_pptx(file):
+    prs = Presentation(file)
+    text = ""
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if hasattr(shape, "text"):
+                text += shape.text + "\n"
+    return text
