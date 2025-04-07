@@ -82,7 +82,7 @@ with tab1:
                         prompt = (
                             "너는 초등 영어 단어 문제를 만드는 선생님이야. "
                             "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
-                            "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
+                            "문제 형식은 반드시 예시를 따라야 하고, 출력은 100문제로 제한해줘."
                         )
 
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
@@ -97,8 +97,10 @@ with tab1:
                                 result = response.choices[0].message.content
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
-                            except openai.error.OpenAIError as e:  # OpenAIError로 처리
+                            except openai.error.OpenAIError as e:
                                 st.error(f"An error occurred: {e}")
+                            except Exception as e:
+                                st.error(f"Unexpected error: {e}")
 
                         st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
                     else:
