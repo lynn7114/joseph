@@ -75,7 +75,7 @@ with tab1:
     primary_file = st.file_uploader("초등 문제지 업로드", type=["docx"], key="primary_word")
 
     if vocab_file:
-        vocab_data = extract_vocab_from_pdf(vocab_file)
+        vocab_data = extract_units_individually_from_pdf(vocab_file)
         unit_list = sorted(vocab_data.keys())  # 정렬
 for unit in unit_list:
     with st.expander(f"{unit} - 문제 생성"):
