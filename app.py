@@ -97,7 +97,7 @@ with tab1:
                                 result = response.choices[0].message.content
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
-                            except openai.error.OpenAIError as e:  # 변경된 부분
+                            except openai.error.OpenAIError as e:  # OpenAIError로 처리
                                 st.error(f"An error occurred: {e}")
 
                         st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
