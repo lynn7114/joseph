@@ -12,8 +12,6 @@ import openai
 api_key = os.getenv("OPENAI_API_KEY")
 st.write(f"API Key loaded: {api_key is not None}")
 
-
-
 # UI 세팅
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
@@ -88,23 +86,23 @@ with tab1:
                         )
 
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
-                        try:
-                            response = openai.ChatCompletion.create(
-                                model="gpt-4",
-                                messages=[
-                                    {"role": "system", "content": prompt},
-                                    {"role": "user", "content": context}
-                                ]
-                            )
-                            result = response.choices[0].message.content
-                            st.success("변형 문제가 생성되었습니다!")
-                            st.write(result)
-                        except openai.error.AuthenticationError as e:
-                            st.error(f"Authentication error: {e}")
-                        except Exception as e:
-                            st.error(f"An error occurred: {e}")
+                            try:
+                                response = openai.ChatCompletion.create(
+                                    model="gpt-4",
+                                    messages=[
+                                        {"role": "system", "content": prompt},
+                                        {"role": "user", "content": context}
+                                    ]
+                                )
+                                result = response.choices[0].message.content
+                                st.success("변형 문제가 생성되었습니다!")
+                                st.write(result)
+                            except openai.error.AuthenticationError as e:
+                                st.error(f"Authentication error: {e}")
+                            except Exception as e:
+                                st.error(f"An error occurred: {e}")
 
-                            st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
+                        st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
                     else:
                         st.warning("초등 문제지 파일을 업로드해주세요.")
     else:
