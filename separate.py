@@ -49,6 +49,7 @@ def extract_units_individually_from_pdf(file):
         for idx, entry in enumerate(words, 1):
             word = entry['word']
             definition = entry['definition']
+            print(f"{idx}. {word} - {definition}")
         print("\n")
 
     return units
