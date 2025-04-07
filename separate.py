@@ -3,6 +3,7 @@ import re
 from pptx import Presentation
 
 def extract_units_individually_from_pdf(file):
+    file.seek(0)  # 파일 포인터 초기화 (안전장치)
     doc = fitz.open(stream=file.read(), filetype="pdf")
     full_text = ""
     for page in doc:
