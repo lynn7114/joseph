@@ -1,5 +1,36 @@
 import re
 from pptx import Presentation
+import fitz  # PyMuPDF
+
+def extract_vocab_from_pdf(file_path_or_file):
+    doc = fitz.open(file_path_or_file)
+    text = ""
+    for page in doc:
+        text += page.get_text()
+
+    units = {}
+    current_unit = None
+    current_words = []
+
+    lines = text.split("\n")
+    for line in lines:
+        line = line.strip()
+        if line.startswith("Unit") and "Unit Test" not in line:
+            if current_unit and current_words:
+                units[current_unit] = current_words
+            current_unit = line
+            current_words = []
+        elif line and "[" in line and "]" in line:
+            parts = line.split("]")
+            if len(parts) >= 2:
+                word = parts[0].split("[")[0].strip()
+                definition = parts[1].strip()
+                current_words.append({"word": word, "definition": definition})
+    if current_unit and current_words:
+        units[current_unit] = current_words
+
+    return units
+
 
 def separate_problems(text: str):
     problem_pattern = re.compile(r"(?P<number>\[\d+\s*~\s*\d+\]|\d{1,2})\.\s*(?P<question>.+?)(?=\n|$)")
