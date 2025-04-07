@@ -89,16 +89,20 @@ with tab1:
                             result = None  # result 변수를 미리 초기화
 
                             try:
-                                response = openai.ChatCompletion.create(
+                                # 새로운 API 호출 방식
+                                response = openai.Completion.create(
                                     model="gpt-4",
                                     messages=[
                                         {"role": "system", "content": prompt},
                                         {"role": "user", "content": context}
                                     ]
                                 )
-                                result = response.choices[0].message.content
+                                result = response['choices'][0]['message']['content']
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
+                            except openai.error.AuthenticationError as e:
+                                print(f"Authentication error: {e}")  # 예외 로그 출력
+                                st.error("인증 오류가 발생했습니다. API 키를 확인해주세요.")
                             except Exception as e:
                                 print(f"An error occurred: {e}")  # 예외 로그 출력
                                 st.error("문제를 생성하는 중 오류가 발생했습니다. 다시 시도해주세요.")
