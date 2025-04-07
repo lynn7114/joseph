@@ -86,6 +86,7 @@ with tab1:
                         )
 
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
+                            result = None  # result 변수를 먼저 초기화
                             try:
                                 response = openai.ChatCompletion.create(
                                     model="gpt-4",
@@ -101,7 +102,10 @@ with tab1:
                                 print(f"An error occurred: {e}")  # 예외 로그 출력
                                 st.error("문제를 생성하는 중 오류가 발생했습니다. 다시 시도해주세요.")
 
-                        st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
+                            if result:
+                                st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
+                            else:
+                                st.error("문제 생성 실패. 다시 시도해 주세요.")
                     else:
                         st.warning("초등 문제지 파일을 업로드해주세요.")
     else:
