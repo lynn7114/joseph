@@ -65,7 +65,7 @@ if "messages" not in st.session_state:
     ]
 
 # 탭 구분
-tab1, tab2, tab3, tab4 = st.tabs(["\ud83d\udcd8 \ub2e8\uc5b4", "\ud83d\udcd7 \ubb38\ub960", "\ud83d\udcd9 \ub4e4\uae30", "\ud83d\udcd5 \uc6d0\uc11c \uc77d\uae30"])
+tab1, tab2, tab3, tab4 = st.tabs(["단어", "문법", "듣기", "원서 읽기"])
 
 with tab1:
     st.markdown("### \ud83d\udcd8 \ub2e8\uc5b4 \ubb38\uc81c \uc0dd\uc131")
