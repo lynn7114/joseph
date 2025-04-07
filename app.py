@@ -75,13 +75,10 @@ with tab1:
 
     if vocab_file:
         vocab_data = extract_vocab_from_pdf(vocab_file)
-        unit_list = list(vocab_data.keys())
-        selected_unit = st.selectbox("Unit을 선택하세요", unit_list)
-
-    if st.button("단어 문제 생성하기"):
-        if not (vocab_file and primary_file):
-            st.warning("단어 PDF와 초등 문제지를 모두 업로드해주세요.")
-        else:
+        unit_list = sorted(vocab_data.keys())  # 정렬
+for unit in unit_list:
+    with st.expander(f"{unit} - 문제 생성"):
+        if st.button(f"{unit} 문제 생성하기", key=unit):
             from docx import Document
             doc = Document(primary_file)
             primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
@@ -90,8 +87,8 @@ with tab1:
             [예시 형식]
             {primary_example}
 
-            [단어 리스트 - {selected_unit}]
-            {json.dumps(vocab_data[selected_unit], ensure_ascii=False, indent=2)}
+            [단어 리스트 - {unit}]
+            {json.dumps(vocab_data[unit], ensure_ascii=False, indent=2)}
             """
 
             prompt = (
@@ -100,7 +97,7 @@ with tab1:
                 "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
             )
 
-            with st.spinner("GPT가 단어 문제를 생성 중입니다..."):
+            with st.spinner(f"{unit} 문제 생성 중입니다..."):
                 response = openai.ChatCompletion.create(
                     model="gpt-4",
                     messages=[
@@ -110,9 +107,10 @@ with tab1:
                 )
 
                 result = response.choices[0].message.content
-                st.success("✅ 단어 문제가 생성되었습니다!")
+                st.success(f"{unit} 문제 생성 완료!")
                 st.write(result)
-                st.download_button("단어 문제 다운로드", result, file_name=f"{selected_unit}_문제_생성결과.txt")
+                st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
+
 # ''' 이하 기존 코드 유지 (주석 처리된 영역은 수정하지 않음)
 '''
 
