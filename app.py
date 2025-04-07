@@ -77,40 +77,44 @@ with tab1:
     if vocab_file:
         vocab_data = extract_units_individually_from_pdf(vocab_file)
         unit_list = sorted(vocab_data.keys())  # 정렬
-for unit in unit_list:
-    with st.expander(f"{unit} - 문제 생성"):
-        if st.button(f"{unit} 문제 생성하기", key=unit):
-            from docx import Document
-            doc = Document(primary_file)
-            primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
+if vocab_file:
+    vocab_data = extract_units_individually_from_pdf(vocab_file)
+    unit_list = sorted(vocab_data.keys())  # 정렬
 
-            context = f"""
-            [예시 형식]
-            {primary_example}
+    for unit in unit_list:  # 조건문 내부에 위치시켜야 함!
+        with st.expander(f"{unit} - 문제 생성"):
+            if st.button(f"{unit} 문제 생성하기", key=unit):
+                from docx import Document
+                doc = Document(primary_file)
+                primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
 
-            [단어 리스트 - {unit}]
-            {json.dumps(vocab_data[unit], ensure_ascii=False, indent=2)}
-            """
+                context = f"""
+                [예시 형식]
+                {primary_example}
 
-            prompt = (
-                "너는 초등 영어 단어 문제를 만드는 선생님이야. "
-                "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
-                "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
-            )
+                [단어 리스트 - {unit}]
+                {json.dumps(vocab_data[unit], ensure_ascii=False, indent=2)}
+                """
 
-            with st.spinner(f"{unit} 문제 생성 중입니다..."):
-                response = openai.ChatCompletion.create(
-                    model="gpt-4",
-                    messages=[
-                        {"role": "system", "content": prompt},
-                        {"role": "user", "content": context}
-                    ]
+                prompt = (
+                    "너는 초등 영어 단어 문제를 만드는 선생님이야. "
+                    "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
+                    "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
                 )
 
-                result = response.choices[0].message.content
-                st.success(f"{unit} 문제 생성 완료!")
-                st.write(result)
-                st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
+                with st.spinner(f"{unit} 문제 생성 중입니다..."):
+                    response = openai.ChatCompletion.create(
+                        model="gpt-4",
+                        messages=[
+                            {"role": "system", "content": prompt},
+                            {"role": "user", "content": context}
+                        ]
+                    )
+
+                    result = response.choices[0].message.content
+                    st.success(f"{unit} 문제 생성 완료!")
+                    st.write(result)
+                    st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
 
 # ''' 이하 기존 코드 유지 (주석 처리된 영역은 수정하지 않음)
 '''
