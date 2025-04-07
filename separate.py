@@ -1,6 +1,9 @@
 import fitz
 import re
 
+import fitz
+import re
+
 def extract_units_individually_from_pdf(file):
     doc = fitz.open(stream=file.read(), filetype="pdf")
     full_text = ""
@@ -18,7 +21,7 @@ def extract_units_individually_from_pdf(file):
     for line in lines:
         line = line.strip()
 
-        # ✅ 'Review'는 무시
+        # ✅ 'Review'와 'Practice'로 시작하는 페이지 무시
         if line.startswith("Review"):
             continue
 
@@ -43,8 +46,13 @@ def extract_units_individually_from_pdf(file):
     if current_unit and current_words:
         units[f"Unit {current_unit}"] = current_words
 
-    return units
-
+    # 유닛별 단어와 뜻을 깔끔하게 출력
+    for unit, words in units.items():
+        print(f"{unit}:\n{'-' * len(unit)}")
+        for idx, entry in enumerate(words, 1):
+            word = entry['word']
+            definition = entry['definition']
+            print(f"{idx}. {word}
 
 def separate_problems(text: str):
     problem_pattern = re.compile(r"(?P<number>\[\d+\s*~\s*\d+\]|\d{1,2})\.\s*(?P<question>.+?)(?=\n|$)")
