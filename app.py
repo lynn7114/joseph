@@ -8,6 +8,7 @@ from style import set_background
 from style import set_custom_fonts
 from separate import separate_problems
 from separate import parse_primary_level_questions
+from pptx import Presentation
 
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
@@ -86,7 +87,7 @@ st.markdown(
 # 업로드 박스 3개
 st.markdown('<div class="custom-title">📘 교과서 업로드</div>', unsafe_allow_html=True)
 with st.container():
-    textbook_file = st.file_uploader("", type=["txt"], key="textbook", label_visibility="collapsed")
+    textbook_file = st.file_uploader("", type=["pptx"], key="textbook", label_visibility="collapsed")
 
 st.markdown('<div class="custom-title">📗 모의고사 업로드</div>', unsafe_allow_html=True)
 with st.container():
@@ -102,20 +103,48 @@ with st.container():
     primary_file = st.file_uploader("", type=["docx", "txt"], key="primary", label_visibility="collapsed")
 
 if st.button("초등 문제 생성하기"):
-    if not primary_file:
-        st.warning("초등 문제지를 업로드해주세요.")
+    if not (textbook_file and primary_file):
+        st.warning("교과서와 초등 문제지를 모두 업로드해주세요.")
     else:
-        from docx import Document  # python-docx 필요
-        doc = Document(primary_file)
-        full_text = "\n".join([p.text for p in doc.paragraphs])
-        
-        parsed = parse_primary_level_questions(full_text)
-        
-        result = json.dumps(parsed, ensure_ascii=False, indent=2)
-        st.success("초등 문제 파싱 결과입니다!")
-        st.code(result, language="json")
+        # 📖 교과서 읽기
+        textbook_text = textbook_file.read().decode("utf-8")
 
-        st.download_button("문제 다운로드", result, file_name="초등문제_파싱결과.json")
+        # 📕 초등 문제지 읽기 (.docx)
+        from docx import Document
+        doc = Document(primary_file)
+        primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
+
+        # 프롬프트 구성
+        system_prompt = (
+            "너는 초등학생을 위한 영어 문제를 만드는 전문가야. "
+            "사용자가 제공한 교과서 내용을 바탕으로 아래 예시 형식을 따라서 문제를 만들어줘. "
+            "형식은 반드시 그대로 따라야 하며, 문제 유형, 개수, 구조, 표현 등을 참고해서 유사하게 구성해줘. "
+            "단, 새 문제의 내용은 교과서를 기반으로 해야 해."
+        )
+
+        user_prompt = f"""
+        [예시 형식: 실제 문제지 문서에서 추출된 내용]
+        {primary_example}
+
+        [교과서 내용]
+        {textbook_text}
+        """
+
+        with st.spinner("GPT가 초등 문제를 생성 중입니다..."):
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ]
+            )
+
+            result = response.choices[0].message.content
+            st.success("초등 문제 생성이 완료되었습니다!")
+            st.write(result)
+
+            st.download_button("초등 문제 다운로드", result, file_name="초등문제_생성결과.txt")
+
 
 
 st.markdown(
