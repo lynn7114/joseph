@@ -1,7 +1,7 @@
 import fitz  # PyMuPDF
+import re
 
 def extract_vocab_from_pdf(uploaded_file):
-    # uploaded_file은 Streamlit의 UploadedFile 객체입니다.
     doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
     text = ""
     for page in doc:
@@ -14,10 +14,13 @@ def extract_vocab_from_pdf(uploaded_file):
     lines = text.split("\n")
     for line in lines:
         line = line.strip()
-        if line.startswith("Unit") and "Unit Test" not in line:
+
+        # ✅ 정규표현식으로 'Unit 1', 'Unit 2' 등만 인식 (묶음 제외)
+        unit_match = re.match(r"^Unit\s+(\d+)$", line)
+        if unit_match:
             if current_unit and current_words:
                 units[current_unit] = current_words
-            current_unit = line
+            current_unit = f"Unit {unit_match.group(1)}"
             current_words = []
         elif line and "[" in line and "]" in line:
             parts = line.split("]")
@@ -25,10 +28,12 @@ def extract_vocab_from_pdf(uploaded_file):
                 word = parts[0].split("[")[0].strip()
                 definition = parts[1].strip()
                 current_words.append({"word": word, "definition": definition})
+
     if current_unit and current_words:
         units[current_unit] = current_words
 
     return units
+
 
 
 def separate_problems(text: str):
