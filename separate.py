@@ -55,3 +55,24 @@ def separate_problems(text: str):
         problems.append(current_problem)
 
     return problems
+
+def parse_primary_level_questions(text: str):
+    # 간단한 정규표현식으로 번호/선지 구분
+    pattern = re.compile(r"(?P<number>\d+)\.\s*(?:\n)?(?P<choices>(?:[a-d]\).+?\n?)+)", re.MULTILINE)
+    choice_pattern = re.compile(r"(a|b|c|d)\)\s*(.+)")
+    problems = []
+
+    for match in pattern.finditer(text):
+        number = match.group("number")
+        raw_choices = match.group("choices").strip().split("\n")
+        parsed_choices = []
+        for c in raw_choices:
+            choice_match = choice_pattern.match(c.strip())
+            if choice_match:
+                parsed_choices.append(choice_match.group(2))
+        problems.append({
+            "number": number,
+            "question": "보기 중 알맞은 단어를 고르세요.",
+            "choices": parsed_choices
+        })
+    return problems
