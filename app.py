@@ -108,7 +108,9 @@ if st.button("초등 문제 생성하기"):
         st.warning("교과서와 초등 문제지를 모두 업로드해주세요.")
     else:
         # 📖 교과서 읽기
-        textbook_text = textbook_file.read().decode("utf-8")
+        # 🧾 교과서 내용 추출
+        textbook_text = extract_text_from_pptx(textbook_file)
+
 
         # 📕 초등 문제지 읽기 (.docx)
         from docx import Document
