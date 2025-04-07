@@ -1,11 +1,7 @@
-import fitz  # PyMuPDF
+import fitz
 import re
 
 def extract_units_individually_from_pdf(file):
-    """
-    Streamlit에서 업로드된 단어 PDF 파일에서 Unit별로 단어와 정의를 추출합니다.
-    각 Unit은 'Unit 1', 'Unit 2', ... 식으로 나눠서 반환됩니다.
-    """
     doc = fitz.open(stream=file.read(), filetype="pdf")
     full_text = ""
     for page in doc:
@@ -16,29 +12,34 @@ def extract_units_individually_from_pdf(file):
     current_words = []
 
     lines = full_text.split("\n")
-    unit_pattern = re.compile(r"^Unit\s+(\d+)\b")  # Unit 1, Unit 2 등과 매칭
-    word_pattern = re.compile(r"^([a-zA-Z\\-']+)\s+\\[.*?\\]\\s*(.*)")  # 단어 [품사] 정의
+    unit_pattern = re.compile(r"^Unit\s+(\d+)\b")
+    word_pattern = re.compile(r"^([a-zA-Z\-']+)\s+\[.*?\]\s*(.*)")
 
     for line in lines:
         line = line.strip()
 
-        # 유닛 시작 라인 확인
+        # ✅ 'Review'는 무시
+        if line.startswith("Review"):
+            continue
+
+        # ✅ Unit 시작
         unit_match = unit_pattern.match(line)
         if unit_match:
+            # 기존 유닛 저장
             if current_unit and current_words:
                 units[f"Unit {current_unit}"] = current_words
             current_unit = unit_match.group(1)
             current_words = []
             continue
 
-        # 단어 라인 처리
+        # ✅ 단어 + 뜻 추출
         word_match = word_pattern.match(line)
         if word_match:
             word = word_match.group(1)
-            meaning = word_match.group(2)
-            current_words.append({"word": word, "definition": meaning})
+            definition = word_match.group(2)
+            current_words.append({"word": word, "definition": definition})
 
-    # 마지막 유닛 저장
+    # ✅ 마지막 유닛 저장
     if current_unit and current_words:
         units[f"Unit {current_unit}"] = current_words
 
