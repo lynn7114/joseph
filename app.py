@@ -65,11 +65,7 @@ if "messages" not in st.session_state:
 tab1, tab2, tab3, tab4 = st.tabs(["단어", "문법", "듣기", "원서 읽기"])
 
 with tab1:
-    st.markdown("""
-        <h3 style='font-family: NanumBarunpenB; color: black;'>
-            단어 문제 생성
-        </h3>
-    """, unsafe_allow_html=True)
+    st.markdown("""<h3 style='font-family: NanumBarunpenB; color: black;'>단어 문제 생성</h3>""", unsafe_allow_html=True)
 
     vocab_file = st.file_uploader("단어 PDF 업로드", type=["pdf"], key="vocab_word")
     primary_file = st.file_uploader("초등 문제지 업로드", type=["docx"], key="primary_word")
@@ -79,47 +75,47 @@ with tab1:
         vocab_data = extract_units_individually_from_pdf(vocab_file)
         unit_list = sorted(vocab_data.keys())
 
-    for unit in unit_list:
-        with st.expander(f"{unit} - 문제 생성"):
-            if st.button(f"{unit} 문제 생성하기", key=unit):
-                if primary_file:
-                    primary_file.seek(0)
-                    from docx import Document
-                    doc = Document(primary_file)
-                    primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
+        for unit in unit_list:
+            with st.expander(f"{unit} - 문제 생성"):
+                if st.button(f"{unit} 문제 생성하기", key=unit):
+                    if primary_file:
+                        primary_file.seek(0)
+                        from docx import Document
+                        doc = Document(primary_file)
+                        primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
 
-                    context = f"""
-                    [예시 형식]
-                    {primary_example}
+                        context = f"""
+                        [예시 형식]
+                        {primary_example}
 
-                    [단어 리스트 - {unit}]
-                    {json.dumps(vocab_data[unit], ensure_ascii=False, indent=2)}
-                    """
+                        [단어 리스트 - {unit}]
+                        {json.dumps(vocab_data[unit], ensure_ascii=False, indent=2)}
+                        """
 
-                    prompt = (
-                        "너는 초등 영어 단어 문제를 만드는 선생님이야. "
-                        "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
-                        "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
-                    )
-
-                    with st.spinner(f"{unit} 문제 생성 중입니다..."):
-                        response = openai.ChatCompletion.create(
-                            model="gpt-4",
-                            messages=[
-                                {"role": "system", "content": prompt},
-                                {"role": "user", "content": context}
-                            ]
+                        prompt = (
+                            "너는 초등 영어 단어 문제를 만드는 선생님이야. "
+                            "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
+                            "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
                         )
 
-                        result = response.choices[0].message.content
-                        st.success(f"{unit} 문제 생성 완료!")
-                        st.write(result)
-                        st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
-                else:
-                    st.warning("초등 문제지 파일을 업로드해주세요.")
+                        with st.spinner(f"{unit} 문제 생성 중입니다..."):
+                            response = openai.ChatCompletion.create(
+                                model="gpt-4",
+                                messages=[
+                                    {"role": "system", "content": prompt},
+                                    {"role": "user", "content": context}
+                                ]
+                            )
 
-else:
-    st.info("단어 PDF 파일을 업로드해주세요.")
+                            result = response.choices[0].message.content
+                            st.success(f"{unit} 문제 생성 완료!")
+                            st.write(result)
+                            st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
+                    else:
+                        st.warning("초등 문제지 파일을 업로드해주세요.")
+    else:
+        st.info("단어 PDF 파일을 업로드해주세요.")
+
 
 # ''' 이하 기존 코드 유지 (주석 처리된 영역은 수정하지 않음)
 '''
