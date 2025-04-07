@@ -68,7 +68,8 @@ if "messages" not in st.session_state:
 tab1, tab2, tab3, tab4 = st.tabs(["단어", "문법", "듣기", "원서 읽기"])
 
 with tab1:
-    st.markdown("### \ud83d\udcd8 \ub2e8\uc5b4 \ubb38\uc81c \uc0dd\uc131")
+    st.markdown("### <span style='font-family: NanumBarunpenB;'>단어 문제 생성</span>", unsafe_allow_html=True)
+
 
     vocab_file = st.file_uploader("\ub2e8\uc5b4 PDF \uc5c5\ub85c\ub4dc", type=["pdf"], key="vocab_word")
     primary_file = st.file_uploader("\ucd08\ub4f1 \ubb38\uc81c\uc9c0 \uc5c5\ub85c\ub4dc", type=["docx"], key="primary_word")
