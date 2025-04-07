@@ -96,6 +96,27 @@ st.markdown('<div class="custom-title">📙 기출문제 업로드</div>', unsaf
 with st.container():
     past_file = st.file_uploader("", type=["txt"], key="past", label_visibility="collapsed")
 
+st.markdown('<div class="custom-title">📕 초등 문제지 업로드</div>', unsafe_allow_html=True)
+with st.container():
+    primary_file = st.file_uploader("", type=["docx", "txt"], key="primary", label_visibility="collapsed")
+
+if st.button("초등 문제 생성하기"):
+    if not primary_file:
+        st.warning("초등 문제지를 업로드해주세요.")
+    else:
+        from docx import Document  # python-docx 필요
+        doc = Document(primary_file)
+        full_text = "\n".join([p.text for p in doc.paragraphs])
+        
+        parsed = parse_primary_level_questions(full_text)
+        
+        result = json.dumps(parsed, ensure_ascii=False, indent=2)
+        st.success("초등 문제 파싱 결과입니다!")
+        st.code(result, language="json")
+
+        st.download_button("문제 다운로드", result, file_name="초등문제_파싱결과.json")
+
+
 st.markdown(
     """
     <style>
