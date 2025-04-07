@@ -46,13 +46,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 st.markdown(
     f"""
-    <h1 style='
-        font-family: NanumBarunpenB;
-        font-size: 48px;
-        color: black;
-        text-align: center;
-        margin-bottom: 30px;
-    '>영어 변형 문제</h1>
+    <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
+        영어 변형 문제
+    </h1>
     """,
     unsafe_allow_html=True
 )
@@ -68,40 +64,43 @@ if "messages" not in st.session_state:
 tab1, tab2, tab3, tab4 = st.tabs(["단어", "문법", "듣기", "원서 읽기"])
 
 with tab1:
-    st.markdown("### <span style='font-family: NanumBarunpenB;'>단어 문제 생성</span>", unsafe_allow_html=True)
+    st.markdown("""
+        <h3 style='font-family: NanumBarunpenB; color: black;'>
+            단어 문제 생성
+        </h3>
+    """, unsafe_allow_html=True)
 
-
-    vocab_file = st.file_uploader("\ub2e8\uc5b4 PDF \uc5c5\ub85c\ub4dc", type=["pdf"], key="vocab_word")
-    primary_file = st.file_uploader("\ucd08\ub4f1 \ubb38\uc81c\uc9c0 \uc5c5\ub85c\ub4dc", type=["docx"], key="primary_word")
+    vocab_file = st.file_uploader("단어 PDF 업로드", type=["pdf"], key="vocab_word")
+    primary_file = st.file_uploader("초등 문제지 업로드", type=["docx"], key="primary_word")
 
     if vocab_file:
         vocab_data = extract_vocab_from_pdf(vocab_file)
         unit_list = list(vocab_data.keys())
-        selected_unit = st.selectbox("\ud83d\udcc2 Unit\uc744 \uc120\ud0dd\ud558\uc138\uc694", unit_list)
+        selected_unit = st.selectbox("Unit을 선택하세요", unit_list)
 
-    if st.button("\ud83d\udcd7 \ub2e8\uc5b4 \ubb38\uc81c \uc0dd\uc131\ud558\uae30"):
+    if st.button("단어 문제 생성하기"):
         if not (vocab_file and primary_file):
-            st.warning("\ub2e8\uc5b4 PDF\uc640 \ucd08\ub4f1 \ubb38\uc81c\uc9c0\ub97c \ubaa8\ub450 \uc5c5\ub85c\ub4dc\ud574\uc8fc\uc138\uc694.")
+            st.warning("단어 PDF와 초등 문제지를 모두 업로드해주세요.")
         else:
             from docx import Document
             doc = Document(primary_file)
             primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
 
             context = f"""
-            [\uc608\uc2dc \ud615\uc2dd]
+            [예시 형식]
             {primary_example}
 
-            [\ub2e8\uc5b4 \ub9ac\uc2a4\ud2b8 - {selected_unit}]
+            [단어 리스트 - {selected_unit}]
             {json.dumps(vocab_data[selected_unit], ensure_ascii=False, indent=2)}
             """
 
             prompt = (
-                "\ub108\ub294 \ucd08\ub4f1 \uc601\uc5b4 \ub2e8\uc5b4 \ubb38\uc81c\ub97c \ub9cc\ub4e4\uc5b4\uc8fc\ub294 \uc120\uc0dd\ub2d8\uc774\uc57c. "
-                "\uc8fc\uc5b4\uc9c4 \ub2e8\uc5b4 \ub9ac\uc2a4\ud2b8\ub97c \ud65c\uc6a9\ud574, \uc544\ub798 \uc608\uc2dc \ud615\uc2dd\ucc98\ub7fc \ub2e8\uc5b4 \ubaa8\uc74c \uace0\ub974\uae30, \ubb38\uc7a5 \ucc44\uc6cc\ub123\uae30, \uccb4\uc790 \uace0\ub974\uae30 \ub4f1\uc758 \ubb38\uc81c\ub97c \ub9cc\ub4e4\uc5b4\uc918. "
-                "\ubb38\uc81c \ud615\uc2dd\uc740 \xeb°%bd\uc2dc\ub97c \ub530\ub77c\uc57c \ud558\uace0, \ucc38\uace0\ub294 10\ubb38\uc81c\ub85c \ud574\uc918."
+                "너는 초등 영어 단어 문제를 만드는 선생님이야. "
+                "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
+                "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
             )
 
-            with st.spinner("GPT\uac00 \ub2e8\uc5b4 \ubb38\uc81c\ub97c \uc0dd\uc131 \uc911\uc785\ub2c8\ub2e4..."):
+            with st.spinner("GPT가 단어 문제를 생성 중입니다..."):
                 response = openai.ChatCompletion.create(
                     model="gpt-4",
                     messages=[
@@ -111,10 +110,9 @@ with tab1:
                 )
 
                 result = response.choices[0].message.content
-                st.success("\u2705 \ub2e8\uc5b4 \ubb38\uc81c\uac00 \uc0dd\uc131\ub418\uc5c8\uc2b5\ub2c8\ub2e4!")
+                st.success("✅ 단어 문제가 생성되었습니다!")
                 st.write(result)
-                st.download_button("\ud83d\udcc5 \ub2e8\uc5b4 \ubb38\uc81c \ub2e4\uc6b4\ub85c\ub4dc", result, file_name=f"{selected_unit}_\ubb38\uc81c_\uc0dd\uc131\uacb0\uacfc.txt")
-
+                st.download_button("단어 문제 다운로드", result, file_name=f"{selected_unit}_문제_생성결과.txt")
 # ''' 이하 기존 코드 유지 (주석 처리된 영역은 수정하지 않음)
 '''
 
