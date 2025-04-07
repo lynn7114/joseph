@@ -14,7 +14,7 @@ def extract_units_individually_from_pdf(file):
 
     lines = full_text.split("\n")
     unit_pattern = re.compile(r"^Unit\s+(\d+)\b")  # "Unit X" 형식으로 구분
-    word_pattern = re.compile(r"^([a-zA-Z\-']+)\s+\[.*?\]\s*(.*)")  # 단어와 뜻 추출
+    word_pattern = re.compile(r"^([a-zA-Z\-']+)\s+\[.*?\]\s*(.*)")  # 단어와 영어 뜻 추출
 
     for line in lines:
         line = line.strip()
@@ -36,7 +36,7 @@ def extract_units_individually_from_pdf(file):
         word_match = word_pattern.match(line)
         if word_match:
             word = word_match.group(1)
-            definition = word_match.group(2)  # 단어 뒤에 나오는 영어 뜻
+            definition = word_match.group(2)  # 영어 뜻 추출
 
             current_words.append({"word": word, "definition": definition})
 
@@ -54,6 +54,7 @@ def extract_units_individually_from_pdf(file):
         print("\n")
 
     return units
+
 
 
 def separate_problems(text: str):
