@@ -10,7 +10,8 @@ from separate import separate_problems
 from separate import parse_primary_level_questions
 from separate import extract_vocab_from_pdf
 from pptx import Presentation
-from separate import extract_text_from_pptx
+from separate import extract_units_individually_from_pdf as extract_vocab_from_pdf
+
 
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
