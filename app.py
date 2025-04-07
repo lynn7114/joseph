@@ -1,3 +1,4 @@
+import openai
 import os
 import json
 import docx
@@ -6,9 +7,8 @@ from dotenv import load_dotenv
 from style import set_background, set_custom_fonts
 from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf
 from pptx import Presentation
-import openai
 
-# API 키 출력
+# API 키 로드
 api_key = os.getenv("OPENAI_API_KEY")
 st.write(f"API Key loaded: {api_key is not None}")
 
