@@ -1,30 +1,29 @@
-import fitz
+import fitz  # PyMuPDF
 import re
-from pptx import Presentation
 
 def extract_units_individually_from_pdf(file):
     file.seek(0)  # 파일 포인터 초기화 (안전장치)
     doc = fitz.open(stream=file.read(), filetype="pdf")
     full_text = ""
     for page in doc:
-        full_text += page.get_text() + "\n"
+        full_text += page.get_text("text") + "\n"  # 'text' 모드로 페이지의 텍스트를 추출합니다.
 
     units = {}
     current_unit = None
     current_words = []
 
     lines = full_text.split("\n")
-    unit_pattern = re.compile(r"^Unit\s+(\d+)\b")
-    word_pattern = re.compile(r"^([a-zA-Z\-']+)\s+\[.*?\]\s*(.*)")
+    unit_pattern = re.compile(r"^Unit\s+(\d+)\b")  # "Unit X" 형식으로 구분
+    word_pattern = re.compile(r"^([a-zA-Z\-']+)\s+\[.*?\]\s*(.*)")  # 단어와 뜻 추출
 
     for line in lines:
         line = line.strip()
 
-        # ✅ 'Review'와 'Practice'로 시작하는 페이지 무시
+        # 'Review'와 'Practice'로 시작하는 페이지 무시
         if line.startswith("Review") or line.startswith("Practice"):
             continue
 
-        # ✅ Unit 시작
+        # Unit 시작
         unit_match = unit_pattern.match(line)
         if unit_match:
             if current_unit and current_words:
@@ -33,14 +32,15 @@ def extract_units_individually_from_pdf(file):
             current_words = []
             continue
 
-        # ✅ 단어 + 뜻 추출
+        # 단어 + 뜻 추출 (영어 뜻 포함)
         word_match = word_pattern.match(line)
         if word_match:
             word = word_match.group(1)
-            definition = word_match.group(2)
+            definition = word_match.group(2)  # 단어 뒤에 나오는 영어 뜻
+
             current_words.append({"word": word, "definition": definition})
 
-    # ✅ 마지막 유닛 저장
+    # 마지막 유닛 저장
     if current_unit and current_words:
         units[f"Unit {current_unit}"] = current_words
 
