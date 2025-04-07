@@ -1,23 +1,22 @@
-import openai
 import os
 import json
 import docx
-from openai import OpenAI
 import streamlit as st
 from dotenv import load_dotenv
-from style import set_background
-from style import set_custom_fonts
-from separate import separate_problems
-from separate import parse_primary_level_questions
+from style import set_background, set_custom_fonts
+from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf
 from pptx import Presentation
-from separate import extract_units_individually_from_pdf
+import openai
 
+# 환경변수 로드 및 OpenAI 클라이언트 초기화
+load_dotenv()
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# UI 세팅
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
 
-st.markdown(
-    """
+st.markdown("""
     <style>
     div.stButton > button {
         font-family: 'NanumBarunpenR', sans-serif;
@@ -28,45 +27,34 @@ st.markdown(
         border-radius: 8px;
         transition: 0.3s;
     }
-
     div.stButton > button:hover {
         background-color: #aed6f1 !important;
         color: black !important;
     }
-
     div.stButton > button:active {
         background-color: #d6eaf8 !important;
         color: black !important;
     }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-st.markdown(
-    f"""
+st.markdown("""
     <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
         영어 변형 문제
     </h1>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
-# 세션 상태 초기화
 if "messages" not in st.session_state:
     st.session_state["messages"] = [
         {"role": "system", "content": "너는 영어 문제를 변형해서 출제하는 도우미야."},
         {"role": "assistant", "content": "기출문제를 입력해주시면 변형 문제를 만들어드릴게요!"}
     ]
 
-# 탭 구분
+# 탭 구성
 tab1, tab2, tab3, tab4 = st.tabs(["단어", "문법", "듣기", "원서 읽기"])
 
 with tab1:
-    st.markdown("""<h3 style='font-family: NanumBarunpenB; color: black;'>단어 문제 생성</h3>""", unsafe_allow_html=True)
-
+    st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>단어 문제 생성</h3>", unsafe_allow_html=True)
     vocab_file = st.file_uploader("단어 PDF 업로드", type=["pdf"], key="vocab_word")
     primary_file = st.file_uploader("초등 문제지 업로드", type=["docx"], key="primary_word")
 
@@ -80,8 +68,7 @@ with tab1:
                 if st.button(f"{unit} 문제 생성하기", key=unit):
                     if primary_file:
                         primary_file.seek(0)
-                        from docx import Document
-                        doc = Document(primary_file)
+                        doc = docx.Document(primary_file)
                         primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
 
                         context = f"""
@@ -99,14 +86,13 @@ with tab1:
                         )
 
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
-                            response = openai.ChatCompletion.create(
+                            response = client.chat.completions.create(
                                 model="gpt-4",
                                 messages=[
                                     {"role": "system", "content": prompt},
                                     {"role": "user", "content": context}
                                 ]
                             )
-
                             result = response.choices[0].message.content
                             st.success(f"{unit} 문제 생성 완료!")
                             st.write(result)
