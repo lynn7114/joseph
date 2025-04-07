@@ -2,28 +2,30 @@ import fitz  # PyMuPDF
 import re
 
 def extract_units_individually_from_pdf(file):
-    file.seek(0)  # 파일 포인터 초기화 (안전장치)
+    file.seek(0)
     doc = fitz.open(stream=file.read(), filetype="pdf")
+
     full_text = ""
     for page in doc:
-        full_text += page.get_text("text") + "\n"  # 'text' 모드로 페이지의 텍스트를 추출합니다.
+        full_text += page.get_text("text") + "\n"
 
     units = {}
     current_unit = None
     current_words = []
 
     lines = full_text.split("\n")
-    unit_pattern = re.compile(r"^Unit\s+(\d+)\b")  # "Unit X" 형식으로 구분
-    word_pattern = re.compile(r"^([a-zA-Z\-']+)\s+\[.*?\]\s*(.*)")  # 단어와 영어 뜻 추출
+    unit_pattern = re.compile(r"^Unit\s+(\d+)\b", re.IGNORECASE)
+    word_line_pattern = re.compile(r"^([a-zA-Z\-']+)\s+\[[^\]]+\]")  # 단어 + 발음
+    pos_definition_pattern = re.compile(r"^(n\.|v\.|adj\.|adv\.)\s+(.+)", re.IGNORECASE)
+
+    last_word = None  # 직전 단어 저장용
 
     for line in lines:
         line = line.strip()
 
-        # 'Review'와 'Practice'로 시작하는 페이지 무시
         if line.startswith("Review") or line.startswith("Practice"):
             continue
 
-        # Unit 시작
         unit_match = unit_pattern.match(line)
         if unit_match:
             if current_unit and current_words:
@@ -32,29 +34,30 @@ def extract_units_individually_from_pdf(file):
             current_words = []
             continue
 
-        # 단어 + 뜻 추출 (영어 뜻 포함)
-        word_match = word_pattern.match(line)
+        word_match = word_line_pattern.match(line)
         if word_match:
             word = word_match.group(1)
-            definition = word_match.group(2)  # 영어 뜻 추출
+            last_word = {"word": word, "definition": ""}
+            current_words.append(last_word)
+            continue
 
-            current_words.append({"word": word, "definition": definition})
+        # 영영 뜻 줄 감지: 품사로 시작하면 해당 단어에 연결
+        definition_match = pos_definition_pattern.match(line)
+        if definition_match and last_word:
+            definition = definition_match.group(2).strip()
+            last_word["definition"] = definition
 
-    # 마지막 유닛 저장
     if current_unit and current_words:
         units[f"Unit {current_unit}"] = current_words
 
-    # 유닛별 단어와 뜻을 깔끔하게 출력
+    # 출력 확인
     for unit, words in units.items():
         print(f"{unit}:\n{'-' * len(unit)}")
         for idx, entry in enumerate(words, 1):
-            word = entry['word']
-            definition = entry['definition']
-            print(f"{idx}. {word} - {definition}")
+            print(f"{idx}. {entry['word']} - {entry['definition']}")
         print("\n")
 
     return units
-
 
 
 def separate_problems(text: str):
