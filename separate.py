@@ -1,32 +1,49 @@
 import fitz  # PyMuPDF
 import re
 
-def extract_vocab_from_pdf(file):
+def extract_units_individually_from_pdf(file):
+    """
+    Streamlit에서 업로드된 단어 PDF 파일에서 Unit별로 단어와 정의를 추출합니다.
+    각 Unit은 'Unit 1', 'Unit 2', ... 식으로 나눠서 반환됩니다.
+    """
     doc = fitz.open(stream=file.read(), filetype="pdf")
-    unit_data = {}
-    current_unit = None
-    word_entries = []
-
+    full_text = ""
     for page in doc:
-        text = page.get_text()
-        unit_match = re.search(r"(\d+)\s*Unit\s*", text)
+        full_text += page.get_text() + "\n"
+
+    units = {}
+    current_unit = None
+    current_words = []
+
+    lines = full_text.split("\n")
+    unit_pattern = re.compile(r"^Unit\s+(\d+)\b")  # Unit 1, Unit 2 등과 매칭
+    word_pattern = re.compile(r"^([a-zA-Z\\-']+)\s+\\[.*?\\]\\s*(.*)")  # 단어 [품사] 정의
+
+    for line in lines:
+        line = line.strip()
+
+        # 유닛 시작 라인 확인
+        unit_match = unit_pattern.match(line)
         if unit_match:
-            # 이전 Unit 저장
-            if current_unit and word_entries:
-                unit_data[f"Unit {current_unit}"] = word_entries
-                word_entries = []
-
+            if current_unit and current_words:
+                units[f"Unit {current_unit}"] = current_words
             current_unit = unit_match.group(1)
+            current_words = []
+            continue
 
-        words = re.findall(r"(?m)^([a-zA-Z]+)\s+\[.*?\]\s*\n\w\.\s+(.*?)\n", text)
-        for word, meaning in words:
-            word_entries.append({"word": word.strip(), "meaning": meaning.strip()})
+        # 단어 라인 처리
+        word_match = word_pattern.match(line)
+        if word_match:
+            word = word_match.group(1)
+            meaning = word_match.group(2)
+            current_words.append({"word": word, "definition": meaning})
 
-    # 마지막 Unit 저장
-    if current_unit and word_entries:
-        unit_data[f"Unit {current_unit}"] = word_entries
+    # 마지막 유닛 저장
+    if current_unit and current_words:
+        units[f"Unit {current_unit}"] = current_words
 
-    return unit_data
+    return units
+
 
 def separate_problems(text: str):
     problem_pattern = re.compile(r"(?P<number>\[\d+\s*~\s*\d+\]|\d{1,2})\.\s*(?P<question>.+?)(?=\n|$)")
