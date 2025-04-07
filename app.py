@@ -13,9 +13,6 @@ api_key = os.getenv("OPENAI_API_KEY")
 st.write(f"API Key loaded: {api_key is not None}")
 
 
-# 환경변수 로드 및 OpenAI 클라이언트 초기화
-load_dotenv()
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # UI 세팅
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
