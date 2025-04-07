@@ -88,7 +88,8 @@ with tab1:
                         )
 
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
-                            response = client.chat.completions.create(
+                        try:
+                            response = openai.ChatCompletion.create(
                                 model="gpt-4",
                                 messages=[
                                     {"role": "system", "content": prompt},
@@ -96,8 +97,13 @@ with tab1:
                                 ]
                             )
                             result = response.choices[0].message.content
-                            st.success(f"{unit} 문제 생성 완료!")
+                            st.success("변형 문제가 생성되었습니다!")
                             st.write(result)
+                        except openai.error.AuthenticationError as e:
+                            st.error(f"Authentication error: {e}")
+                        except Exception as e:
+                            st.error(f"An error occurred: {e}")
+
                             st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
                     else:
                         st.warning("초등 문제지 파일을 업로드해주세요.")
