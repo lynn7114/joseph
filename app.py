@@ -9,6 +9,7 @@ from style import set_custom_fonts
 from separate import separate_problems
 from separate import parse_primary_level_questions
 from pptx import Presentation
+from separate import extract_text_from_pptx
 
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
