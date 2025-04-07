@@ -8,6 +8,11 @@ from separate import separate_problems, parse_primary_level_questions, extract_u
 from pptx import Presentation
 import openai
 
+# API 키 출력
+api_key = os.getenv("OPENAI_API_KEY")
+st.write(f"API Key loaded: {api_key is not None}")
+
+
 # 환경변수 로드 및 OpenAI 클라이언트 초기화
 load_dotenv()
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
