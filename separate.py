@@ -1,40 +1,32 @@
 import fitz  # PyMuPDF
 import re
 
-def extract_vocab_from_pdf(uploaded_file):
-    doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
-    text = ""
-    for page in doc:
-        text += page.get_text()
-
-    units = {}
+def extract_vocab_from_pdf(file):
+    doc = fitz.open(stream=file.read(), filetype="pdf")
+    unit_data = {}
     current_unit = None
-    current_words = []
+    word_entries = []
 
-    lines = text.split("\n")
-    for line in lines:
-        line = line.strip()
-
-        # ✅ 정규표현식으로 'Unit 1', 'Unit 2' 등만 인식 (묶음 제외)
-        unit_match = re.match(r"^Unit\s+(\d+)$", line)
+    for page in doc:
+        text = page.get_text()
+        unit_match = re.search(r"(\d+)\s*Unit\s*", text)
         if unit_match:
-            if current_unit and current_words:
-                units[current_unit] = current_words
-            current_unit = f"Unit {unit_match.group(1)}"
-            current_words = []
-        elif line and "[" in line and "]" in line:
-            parts = line.split("]")
-            if len(parts) >= 2:
-                word = parts[0].split("[")[0].strip()
-                definition = parts[1].strip()
-                current_words.append({"word": word, "definition": definition})
+            # 이전 Unit 저장
+            if current_unit and word_entries:
+                unit_data[f"Unit {current_unit}"] = word_entries
+                word_entries = []
 
-    if current_unit and current_words:
-        units[current_unit] = current_words
+            current_unit = unit_match.group(1)
 
-    return units
+        words = re.findall(r"(?m)^([a-zA-Z]+)\s+\[.*?\]\s*\n\w\.\s+(.*?)\n", text)
+        for word, meaning in words:
+            word_entries.append({"word": word.strip(), "meaning": meaning.strip()})
 
+    # 마지막 Unit 저장
+    if current_unit and word_entries:
+        unit_data[f"Unit {current_unit}"] = word_entries
 
+    return unit_data
 
 def separate_problems(text: str):
     problem_pattern = re.compile(r"(?P<number>\[\d+\s*~\s*\d+\]|\d{1,2})\.\s*(?P<question>.+?)(?=\n|$)")
