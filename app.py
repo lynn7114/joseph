@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from style import set_background
 from style import set_custom_fonts
 from separate import separate_problems
+from separate import parse_primary_level_questions
 
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
