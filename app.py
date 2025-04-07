@@ -1,6 +1,7 @@
 import openai
 import os
 import json
+import docx
 from openai import OpenAI
 import streamlit as st
 from dotenv import load_dotenv
