@@ -1,9 +1,8 @@
-import re
-from pptx import Presentation
 import fitz  # PyMuPDF
 
-def extract_vocab_from_pdf(file_path_or_file):
-    doc = fitz.open(file_path_or_file)
+def extract_vocab_from_pdf(uploaded_file):
+    # uploaded_file은 Streamlit의 UploadedFile 객체입니다.
+    doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
     text = ""
     for page in doc:
         text += page.get_text()
