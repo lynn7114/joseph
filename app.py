@@ -10,8 +10,8 @@ from pptx import Presentation
 
 # API 키 로드
 openai.api_key=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
-api_key = os.getenv("OPENAI_API_KEY")
-st.write(f"API Key loaded: {api_key is not None}")
+#api_key = os.getenv("OPENAI_API_KEY")
+#st.write(f"API Key loaded: {api_key is not None}")
 
 # UI 세팅
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
