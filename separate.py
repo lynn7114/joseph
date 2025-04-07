@@ -1,4 +1,5 @@
 import re
+from pptx import Presentation
 
 def separate_problems(text: str):
     problem_pattern = re.compile(r"(?P<number>\[\d+\s*~\s*\d+\]|\d{1,2})\.\s*(?P<question>.+?)(?=\n|$)")
