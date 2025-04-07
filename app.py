@@ -9,7 +9,6 @@ from style import set_background
 from style import set_custom_fonts
 from separate import separate_problems
 from separate import parse_primary_level_questions
-from separate import extract_vocab_from_pdf
 from pptx import Presentation
 from separate import extract_units_individually_from_pdf
 
