@@ -3,13 +3,14 @@ import os
 import json
 import docx
 import streamlit as st
+from openai import OpenAI
 from dotenv import load_dotenv
 from style import set_background, set_custom_fonts
 from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf, extract_units_from_excel
 from pptx import Presentation
 
 # API 키 로드
-openai.api_key="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"
+client = OpenAI(api_key="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")
 #api_key = os.getenv("OPENAI_API_KEY")
 #st.write(f"API Key loaded: {api_key is not None}")
 
@@ -90,7 +91,7 @@ with tab1:
 
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
                             try:
-                                response = openai.ChatCompletion.create(
+                                response = client.chat.completions.creat(
                                     model="gpt-4",
                                     messages=[
                                         {"role": "system", "content": prompt},
