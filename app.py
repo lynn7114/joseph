@@ -1,6 +1,7 @@
 import openai
 import os
 import json
+import re
 import docx
 import streamlit as st
 from openai import OpenAI
@@ -65,7 +66,10 @@ with tab1:
     if vocab_file:
         vocab_file.seek(0)
         vocab_data = extract_units_from_excel(vocab_file)
-        unit_list = sorted(vocab_data.keys())
+        unit_list = sorted(
+            vocab_data.keys(),
+            key=lambda x: int(re.search(r'\d+', x).group())
+        )
 
         for unit in unit_list:
             with st.expander(f"{unit} - 문제 생성"):
