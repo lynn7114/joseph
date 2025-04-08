@@ -5,7 +5,7 @@ import docx
 import streamlit as st
 from dotenv import load_dotenv
 from style import set_background, set_custom_fonts
-from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf
+from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf, extract_units_from_excel
 from pptx import Presentation
 
 # API 키 로드
@@ -56,15 +56,16 @@ tab1, tab2, tab3, tab4 = st.tabs(["단어", "문법", "듣기", "원서 읽기"]
 
 with tab1:
     st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>단어 문제 생성</h3>", unsafe_allow_html=True)
-    # 기존 PDF 업로드 → 엑셀 업로드로 교체
-    vocab_file = st.file_uploader("단어 엑셀 업로드 (xlsx)", type=["xlsx"], key="vocab_word_excel")
     
-    # 기존 PDF 처리 코드 삭제 후 아래로 교체
+    # 엑셀과 docx 업로드
+    vocab_file = st.file_uploader("단어 엑셀 업로드 (xlsx)", type=["xlsx"], key="vocab_word_excel")
+    primary_file = st.file_uploader("초등 문제지 업로드 (docx)", type=["docx"], key="primary_word")
+
     if vocab_file:
         vocab_file.seek(0)
         vocab_data = extract_units_from_excel(vocab_file)
         unit_list = sorted(vocab_data.keys())
-    
+
         for unit in unit_list:
             with st.expander(f"{unit} - 문제 생성"):
                 if st.button(f"{unit} 문제 생성하기", key=unit):
@@ -72,21 +73,21 @@ with tab1:
                         primary_file.seek(0)
                         doc = docx.Document(primary_file)
                         primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
-    
+
                         context = f"""
                         [예시 형식]
                         {primary_example}
-    
+
                         [단어 리스트 - {unit}]
                         {json.dumps(vocab_data[unit], ensure_ascii=False, indent=2)}
                         """
-    
+
                         prompt = (
                             "너는 초등 영어 단어 문제를 만드는 선생님이야. "
                             "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
-                            "문제 형식은 반드시 예시를 따라야 하고, 출력은 10문제로 제한해줘."
+                            "문제 형식은 반드시 예시를 따라야 하고, 출력은 100문제로 제한해줘."
                         )
-    
+
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
                             try:
                                 response = openai.ChatCompletion.create(
@@ -104,7 +105,8 @@ with tab1:
                                 st.error(f"오류 발생: {e}")
                     else:
                         st.warning("초등 문제지 파일을 업로드해주세요.")
-
+    else:
+        st.info("단어 엑셀 파일을 업로드해주세요.")
 
 '''
 
