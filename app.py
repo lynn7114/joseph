@@ -95,7 +95,7 @@ with tab1:
 
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
                             try:
-                                response = client.chat.completions.creat(
+                                response = client.chat.completions.create(
                                     model="gpt-4",
                                     messages=[
                                         {"role": "system", "content": prompt},
