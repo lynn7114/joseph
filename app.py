@@ -11,9 +11,8 @@ from separate import separate_problems, parse_primary_level_questions, extract_u
 from pptx import Presentation
 
 # API 키 로드
-client = OpenAI(api_key="")
-#api_key = os.getenv("OPENAI_API_KEY")
-#st.write(f"API Key loaded: {api_key is not None}")
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # UI 세팅
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
