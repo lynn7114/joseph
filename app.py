@@ -11,7 +11,7 @@ from separate import separate_problems, parse_primary_level_questions, extract_u
 from pptx import Presentation
 
 # API 키 로드
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="")
 #api_key = os.getenv("OPENAI_API_KEY")
 #st.write(f"API Key loaded: {api_key is not None}")
 
