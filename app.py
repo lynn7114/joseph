@@ -12,7 +12,7 @@ from pptx import Presentation
 
 # API 키 로드
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # UI 세팅
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
