@@ -1,5 +1,29 @@
 import fitz  # PyMuPDF
 import re
+import pandas as pd
+
+def extract_units_from_excel(file):
+    df = pd.read_excel(file)
+    units = {}
+
+    # "Unit"과 "Word", "Definition" 컬럼이 있다고 가정
+    for _, row in df.iterrows():
+        unit = row["Unit"]
+        word = row["Word"]
+        definition = row["Definition"]
+
+        if pd.isna(unit) or pd.isna(word):
+            continue
+
+        unit_key = f"Unit {int(unit)}" if isinstance(unit, (int, float)) else str(unit)
+        if unit_key not in units:
+            units[unit_key] = []
+        units[unit_key].append({
+            "word": str(word).strip(),
+            "definition": str(definition).strip() if pd.notna(definition) else ""
+        })
+
+    return units
 
 def extract_units_individually_from_pdf(file):
     file.seek(0)
