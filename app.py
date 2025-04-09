@@ -99,6 +99,27 @@ with st.sidebar:
     if st.button("원서 읽기", on_click=select_menu, args=("원서 읽기",)):
         pass
 
+# -------------------------------
+# 메인 영역 컨텐츠 조건 분기
+# -------------------------------
+selected_tab = st.session_state["selected_menu"]
+
+if selected_tab == "단어":
+    st.header("단어 문제 생성")
+    # 단어 관련 코드 넣기
+
+elif selected_tab == "문법":
+    st.header("문법 문제 생성")
+    # 문법 관련 코드 넣기
+
+elif selected_tab == "듣기":
+    st.header("듣기 문제 생성")
+    # 듣기 관련 코드 넣기
+
+elif selected_tab == "원서 읽기":
+    st.header("원서 읽기 연습")
+    # 원서 읽기 관련 코드 넣기
+
 st.markdown("""
     <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
         영어 변형 문제
