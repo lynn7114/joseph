@@ -69,7 +69,6 @@ with st.sidebar:
 
 # 선택된 메뉴 출력
 selected_tab = st.session_state["selected_menu"]
-st.write(f"현재 선택된 탭: {selected_tab}")
 
 st.markdown("""
     <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
