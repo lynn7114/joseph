@@ -119,8 +119,22 @@ if selected_tab == "단어":
         ]
 
     
+    # 단어 업로드 타이틀
+    st.markdown("""
+        <h4 style='font-family: NanumBarunpenB; color: #1f4e79;'>
+            단어 업로드
+        </h4>
+    """, unsafe_allow_html=True)
     vocab_file = st.file_uploader("", type=["xlsx"], key="vocab_word_excel")
+    
+    # 변형 문제 업로드 타이틀
+    st.markdown("""
+        <h4 style='font-family: NanumBarunpenB; color: #1f4e79;'>
+            변형 문제 업로드
+        </h4>
+    """, unsafe_allow_html=True)
     primary_file = st.file_uploader("", type=["docx"], key="primary_word")
+
 
     if vocab_file:
         vocab_file.seek(0)
