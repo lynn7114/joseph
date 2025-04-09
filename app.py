@@ -58,10 +58,10 @@ st.markdown("""
 # 👇 예쁜 사이드바 제목
 st.sidebar.markdown("<div class='sidebar-title'>📚 영어 문제 생성기</div>", unsafe_allow_html=True)
 
-# 👇 사이드바 라디오 메뉴
 selected_tab = st.sidebar.radio(
     "영역 선택",
-    ["단어", "문법", "듣기", "원서 읽기"]
+    ["단어", "문법", "듣기", "원서 읽기"],
+    key="sidebar_tab_selector"
 )
 
 st.markdown("""
