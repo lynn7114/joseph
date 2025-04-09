@@ -121,7 +121,7 @@ if selected_tab == "단어":
     
     # 단어 업로드 타이틀
     st.markdown("""
-        <h4 style='font-family: NanumBarunpenB; color: #1f4e79;'>
+        <h4 style='font-family: NanumBarunpenB; color: #1f4e79; text-align: center;'>
             단어 업로드
         </h4>
     """, unsafe_allow_html=True)
@@ -129,7 +129,7 @@ if selected_tab == "단어":
     
     # 변형 문제 업로드 타이틀
     st.markdown("""
-        <h4 style='font-family: NanumBarunpenB; color: #1f4e79;'>
+        <h4 style='font-family: NanumBarunpenB; color: #1f4e79; text-align: center;'>
             변형 문제 업로드
         </h4>
     """, unsafe_allow_html=True)
