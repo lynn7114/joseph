@@ -18,51 +18,58 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
 
-# 👇 여기에 사이드바 꾸미기 코드 추가
+# 스타일 커스텀
 st.markdown("""
     <style>
-    [data-testid="stSidebar"] {
-        background-color: #e8f4fd;
-        padding: 2rem 1rem;
-    }
-
     .sidebar-title {
         font-size: 24px;
         font-family: 'NanumBarunpenB', sans-serif;
         font-weight: bold;
         color: #1f4e79;
-        margin-bottom: 1rem;
+        margin-bottom: 20px;
     }
 
-    div[data-baseweb="radio"] > div {
+    div.stButton > button {
+        width: 100%;
         background-color: #ffffff;
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
+        color: #1f4e79;
         border: 1px solid #85c1e9;
-        margin-bottom: 0.5rem;
-        transition: 0.2s;
+        border-radius: 8px;
+        padding: 0.6em;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-family: 'NanumBarunpenR', sans-serif;
+        transition: 0.3s;
     }
 
-    div[data-baseweb="radio"] > div:hover {
+    div.stButton > button:hover {
         background-color: #d6eaf8;
-        cursor: pointer;
-    }
-
-    div[data-baseweb="radio"] input:checked + div {
-        background-color: #aed6f1;
-        font-weight: bold;
+        color: black;
+        border-color: #aed6f1;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 👇 예쁜 사이드바 제목
-st.sidebar.markdown("<div class='sidebar-title'>📚 영어 문제 생성기</div>", unsafe_allow_html=True)
+# 상태 저장
+if "selected_menu" not in st.session_state:
+    st.session_state["selected_menu"] = "단어"
 
-selected_tab = st.sidebar.radio(
-    "영역 선택",
-    ["단어", "문법", "듣기", "원서 읽기"],
-    key="sidebar_tab_selector"
-)
+# 사이드바 메뉴 타이틀
+with st.sidebar:
+    st.markdown('<div class="sidebar-title">📚 영역 선택</div>', unsafe_allow_html=True)
+
+    if st.sidebar.button("단어"):
+        st.session_state["selected_menu"] = "단어"
+    if st.sidebar.button("문법"):
+        st.session_state["selected_menu"] = "문법"
+    if st.sidebar.button("듣기"):
+        st.session_state["selected_menu"] = "듣기"
+    if st.sidebar.button("원서 읽기"):
+        st.session_state["selected_menu"] = "원서 읽기"
+
+# 선택된 메뉴 출력
+selected_tab = st.session_state["selected_menu"]
+st.write(f"현재 선택된 탭: {selected_tab}")
 
 st.markdown("""
     <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
@@ -76,12 +83,6 @@ if "messages" not in st.session_state:
         {"role": "system", "content": "너는 영어 문제를 변형해서 출제하는 도우미야."},
         {"role": "assistant", "content": "기출문제를 입력해주시면 변형 문제를 만들어드릴게요!"}
     ]
-
-# 사이드바 메뉴 (탭처럼 사용)
-selected_tab = st.sidebar.radio(
-    "영역 선택",
-    ["단어", "문법", "듣기", "원서 읽기"]
-)
 
 # 각 영역별 탭 구성
 if selected_tab == "단어":
