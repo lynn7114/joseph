@@ -46,19 +46,23 @@ st.markdown("""
     </h1>
 """, unsafe_allow_html=True)
 
+# 세션 초기화
 if "messages" not in st.session_state:
     st.session_state["messages"] = [
         {"role": "system", "content": "너는 영어 문제를 변형해서 출제하는 도우미야."},
         {"role": "assistant", "content": "기출문제를 입력해주시면 변형 문제를 만들어드릴게요!"}
     ]
 
-# 탭 구성
-tab1, tab2, tab3, tab4 = st.tabs(["단어", "문법", "듣기", "원서 읽기"])
+# 사이드바 메뉴 (탭처럼 사용)
+selected_tab = st.sidebar.radio(
+    "영역 선택",
+    ["단어", "문법", "듣기", "원서 읽기"]
+)
 
-with tab1:
+# 각 영역별 탭 구성
+if selected_tab == "단어":
     st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>단어 문제 생성</h3>", unsafe_allow_html=True)
     
-    # 엑셀과 docx 업로드
     vocab_file = st.file_uploader("단어 엑셀 업로드 (xlsx)", type=["xlsx"], key="vocab_word_excel")
     primary_file = st.file_uploader("초등 문제지 업로드 (docx)", type=["docx"], key="primary_word")
 
@@ -111,4 +115,16 @@ with tab1:
                         st.warning("초등 문제지 파일을 업로드해주세요.")
     else:
         st.info("단어 엑셀 파일을 업로드해주세요.")
+
+elif selected_tab == "문법":
+    st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>문법 문제 생성 (업데이트 예정)</h3>", unsafe_allow_html=True)
+    st.info("문법 문제 기능은 준비 중이에요. 필요한 문법 유형이나 문제 스타일이 있다면 알려주세요!")
+
+elif selected_tab == "듣기":
+    st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>듣기 문제 생성 (업데이트 예정)</h3>", unsafe_allow_html=True)
+    st.info("듣기 문제 기능은 곧 추가됩니다! mp3 업로드 기반으로 구현될 예정입니다.")
+
+elif selected_tab == "원서 읽기":
+    st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>원서 독해 문제 생성 (업데이트 예정)</h3>", unsafe_allow_html=True)
+    st.info("원서 기반 독해 문제 기능은 준비 중이에요. 읽고 싶은 원서 파일이 있다면 지금 올려주세요!")
 
