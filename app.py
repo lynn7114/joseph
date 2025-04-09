@@ -191,8 +191,71 @@ elif selected_tab == "문법":
     st.info("문법 문제 기능은 준비 중이에요. 필요한 문법 유형이나 문제 스타일이 있다면 알려주세요!")
 
 elif selected_tab == "듣기":
-    st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>듣기 문제 생성 (업데이트 예정)</h3>", unsafe_allow_html=True)
-    st.info("듣기 문제 기능은 곧 추가됩니다! mp3 업로드 기반으로 구현될 예정입니다.")
+    st.markdown("""
+        <h1 style='font-family: NanumBarunpenB; font-size: 40px; color: black; text-align: center; margin-bottom: 30px;'>
+            듣기 변형 문제 생성
+        </h1>
+    """, unsafe_allow_html=True)
+
+    # 교재 업로드
+    st.markdown("""
+        <h4 style='font-family: NanumBarunpenB; color: #1f4e79; text-align: center;'>
+            교재 업로드
+        </h4>
+    """, unsafe_allow_html=True)
+    listening_script_file = st.file_uploader("", type=["pdf"], key="listening_script")
+
+    # 변형 문제 업로드
+    st.markdown("""
+        <h4 style='font-family: NanumBarunpenB; color: #1f4e79; text-align: center;'>
+            변형 문제 업로드
+        </h4>
+    """, unsafe_allow_html=True)
+    listening_example_file = st.file_uploader("", type=["docx"], key="listening_example")
+    if listening_script_file and listening_example_file:
+    
+        # PDF → 텍스트 추출
+        with fitz.open(stream=listening_script_file.read(), filetype="pdf") as doc:
+            script_text = "\n".join(page.get_text() for page in doc)
+    
+        # 예시 문제 추출
+        doc = docx.Document(listening_example_file)
+        example_text = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
+    
+        # 프롬프트 구성
+        prompt = (
+            "너는 초등학생 영어 듣기 문제를 만드는 선생님이야. "
+            "아래 예시 형식을 참고해서, 주어진 듣기 스크립트를 바탕으로 변형 문제를 만들어줘. "
+            "문제는 5문항 이상 만들어야 하고, 문제 유형은 듣고 고르기, 대화 완성하기, 내용 일치 등으로 다양하게 구성해줘. "
+            "문제는 반드시 예시 형식과 문체를 따라야 해."
+        )
+        
+        context = f"""
+        [예시 문제]
+        {example_text}
+    
+        [듣기 스크립트]
+        {script_text}
+        """
+    
+        with st.spinner("변형 문제 생성 중입니다..."):
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": prompt},
+                        {"role": "user", "content": context}
+                    ]
+                )
+                result = response.choices[0].message.content
+                st.success("변형 문제가 생성되었습니다.")
+                st.write(result)
+                st.download_button("듣기 문제 다운로드", result, file_name="듣기_변형문제.txt", key="download_listening")
+            except Exception as e:
+                st.error(f"오류 발생: {e}")
+    else:
+        st.info("교재와 예시 문제 파일을 모두 업로드해주세요.")
+
 
 elif selected_tab == "원서 읽기":
     st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>원서 독해 문제 생성 (업데이트 예정)</h3>", unsafe_allow_html=True)
