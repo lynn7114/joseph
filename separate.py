@@ -83,6 +83,21 @@ def extract_units_individually_from_pdf(file):
 
     return units
 
+def extract_units_from_docx(file):
+    doc = docx.Document(file)
+    full_text = "\n".join([p.text.strip() for p in doc.paragraphs if p.text.strip()])
+
+    # 유닛 단위로 split (예: Unit 1 First Day)
+    units = re.split(r'(Unit \d+[^U]*)', full_text)
+    
+    unit_data = {}
+    for i in range(1, len(units), 2):
+        title = units[i].strip().split("\n")[0]  # ex: Unit 1 First Day
+        content = units[i] + units[i+1] if i + 1 < len(units) else units[i]
+        unit_data[title] = content.strip()
+    
+    return unit_data
+
 
 def separate_problems(text: str):
     problem_pattern = re.compile(r"(?P<number>\[\d+\s*~\s*\d+\]|\d{1,2})\.\s*(?P<question>.+?)(?=\n|$)")
