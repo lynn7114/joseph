@@ -50,25 +50,53 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# 기본 설정
+st.set_page_config(page_title="영어 변형 문제", layout="wide")
+
 # 상태 저장
 if "selected_menu" not in st.session_state:
     st.session_state["selected_menu"] = "단어"
 
-# 사이드바 메뉴 타이틀
+# 선택 함수 정의
+def select_menu(menu_name):
+    st.session_state["selected_menu"] = menu_name
+
+# HTML 버튼 스타일
+st.sidebar.markdown("""
+    <style>
+    .menu-button {
+        display: block;
+        width: 100%;
+        padding: 10px 20px;
+        margin-bottom: 10px;
+        background-color: #ffffff;
+        color: #1f4e79;
+        text-align: left;
+        border: 2px solid #85c1e9;
+        border-radius: 10px;
+        font-size: 18px;
+        font-family: 'NanumBarunpenB', sans-serif;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .menu-button:hover {
+        background-color: #d6eaf8;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# 메뉴 버튼들
 with st.sidebar:
-    st.markdown('<div class="sidebar-title">📚 영역 선택</div>', unsafe_allow_html=True)
-
-    if st.sidebar.button("단어"):
-        st.session_state["selected_menu"] = "단어"
-    if st.sidebar.button("문법"):
-        st.session_state["selected_menu"] = "문법"
-    if st.sidebar.button("듣기"):
-        st.session_state["selected_menu"] = "듣기"
-    if st.sidebar.button("원서 읽기"):
-        st.session_state["selected_menu"] = "원서 읽기"
-
-# 선택된 메뉴 출력
-selected_tab = st.session_state["selected_menu"]
+    st.markdown('<div class="sidebar-title">메뉴 선택</div>', unsafe_allow_html=True)
+    if st.button("단어", on_click=select_menu, args=("단어",)):
+        pass
+    if st.button("문법", on_click=select_menu, args=("문법",)):
+        pass
+    if st.button("듣기", on_click=select_menu, args=("듣기",)):
+        pass
+    if st.button("원서 읽기", on_click=select_menu, args=("원서 읽기",)):
+        pass
 
 st.markdown("""
     <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
