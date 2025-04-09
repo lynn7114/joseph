@@ -3,6 +3,7 @@ import os
 import json
 import re
 import docx
+import fitz
 import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
