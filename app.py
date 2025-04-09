@@ -205,7 +205,13 @@ elif selected_tab == "듣기":
     """, unsafe_allow_html=True)
     listening_file = st.file_uploader("", type=["docx"], key="listening_docx")
 
-    example_file = st.file_uploader("예시 문제 업로드 (docx)", type=["docx"], key="listening_example")
+    st.markdown("""
+        <h4 style='font-family: NanumBarunpenB; color: #1f4e79; text-align: center;'>
+            예시 문제 업로드
+        </h4>
+    """, unsafe_allow_html=True)
+    example_file = st.file_uploader("", type=["docx"], key="listening_example")
+
 
     if listening_file:
         units = extract_units_from_docx(listening_file)
