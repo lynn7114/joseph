@@ -18,27 +18,51 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 set_background("anthony-delanoix-urUdKCxsTUI-unsplash.jpg")
 set_custom_fonts("NanumBarunpenB.ttf", "NanumBarunpenB", "NanumBarunpenR.ttf", "NanumBarunpenR")
 
+# 👇 여기에 사이드바 꾸미기 코드 추가
 st.markdown("""
     <style>
-    div.stButton > button {
-        font-family: 'NanumBarunpenR', sans-serif;
-        color: black !important;
-        background-color: #85c1e9 !important;
-        border: none;
-        padding: 0.5em 1em;
-        border-radius: 8px;
-        transition: 0.3s;
+    [data-testid="stSidebar"] {
+        background-color: #e8f4fd;
+        padding: 2rem 1rem;
     }
-    div.stButton > button:hover {
-        background-color: #aed6f1 !important;
-        color: black !important;
+
+    .sidebar-title {
+        font-size: 24px;
+        font-family: 'NanumBarunpenB', sans-serif;
+        font-weight: bold;
+        color: #1f4e79;
+        margin-bottom: 1rem;
     }
-    div.stButton > button:active {
-        background-color: #d6eaf8 !important;
-        color: black !important;
+
+    div[data-baseweb="radio"] > div {
+        background-color: #ffffff;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border: 1px solid #85c1e9;
+        margin-bottom: 0.5rem;
+        transition: 0.2s;
+    }
+
+    div[data-baseweb="radio"] > div:hover {
+        background-color: #d6eaf8;
+        cursor: pointer;
+    }
+
+    div[data-baseweb="radio"] input:checked + div {
+        background-color: #aed6f1;
+        font-weight: bold;
     }
     </style>
 """, unsafe_allow_html=True)
+
+# 👇 예쁜 사이드바 제목
+st.sidebar.markdown("<div class='sidebar-title'>📚 영어 문제 생성기</div>", unsafe_allow_html=True)
+
+# 👇 사이드바 라디오 메뉴
+selected_tab = st.sidebar.radio(
+    "영역 선택",
+    ["단어", "문법", "듣기", "원서 읽기"]
+)
 
 st.markdown("""
     <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
