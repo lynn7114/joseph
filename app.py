@@ -67,6 +67,9 @@ with st.sidebar:
     if st.sidebar.button("원서 읽기"):
         st.session_state["selected_menu"] = "원서 읽기"
 
+# 선택된 메뉴 출력
+selected_tab = st.session_state["selected_menu"]
+
 st.markdown("""
     <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
         영어 변형 문제
