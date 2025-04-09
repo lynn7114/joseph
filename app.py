@@ -10,6 +10,10 @@ from style import set_background, set_custom_fonts
 from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf, extract_units_from_excel
 from pptx import Presentation
 
+
+# 기본 설정
+st.set_page_config(page_title="영어 변형 문제", layout="wide")
+
 # API 키 로드
 load_dotenv()
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
@@ -49,9 +53,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-# 기본 설정
-st.set_page_config(page_title="영어 변형 문제", layout="wide")
 
 # 상태 저장
 if "selected_menu" not in st.session_state:
