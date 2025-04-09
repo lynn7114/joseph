@@ -105,37 +105,20 @@ with st.sidebar:
 selected_tab = st.session_state["selected_menu"]
 
 if selected_tab == "단어":
-    st.header("단어 문제 생성")
     # 단어 관련 코드 넣기
+    st.markdown("""
+        <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
+            영어 변형 문제
+        </h1>
+    """, unsafe_allow_html=True)
+    
+    # 세션 초기화
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = [
+            {"role": "system", "content": "너는 영어 문제를 변형해서 출제하는 도우미야."},
+            {"role": "assistant", "content": "기출문제를 입력해주시면 변형 문제를 만들어드릴게요!"}
+        ]
 
-elif selected_tab == "문법":
-    st.header("문법 문제 생성")
-    # 문법 관련 코드 넣기
-
-elif selected_tab == "듣기":
-    st.header("듣기 문제 생성")
-    # 듣기 관련 코드 넣기
-
-elif selected_tab == "원서 읽기":
-    st.header("원서 읽기 연습")
-    # 원서 읽기 관련 코드 넣기
-
-st.markdown("""
-    <h1 style='font-family: NanumBarunpenB; font-size: 48px; color: black; text-align: center; margin-bottom: 30px;'>
-        영어 변형 문제
-    </h1>
-""", unsafe_allow_html=True)
-
-# 세션 초기화
-if "messages" not in st.session_state:
-    st.session_state["messages"] = [
-        {"role": "system", "content": "너는 영어 문제를 변형해서 출제하는 도우미야."},
-        {"role": "assistant", "content": "기출문제를 입력해주시면 변형 문제를 만들어드릴게요!"}
-    ]
-
-# 각 영역별 탭 구성
-if selected_tab == "단어":
-    st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>단어 문제 생성</h3>", unsafe_allow_html=True)
     
     vocab_file = st.file_uploader("단어 엑셀 업로드 (xlsx)", type=["xlsx"], key="vocab_word_excel")
     primary_file = st.file_uploader("초등 문제지 업로드 (docx)", type=["docx"], key="primary_word")
