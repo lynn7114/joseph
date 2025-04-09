@@ -10,7 +10,6 @@ from style import set_background, set_custom_fonts
 from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf, extract_units_from_excel
 from pptx import Presentation
 
-
 # 기본 설정
 st.set_page_config(page_title="영어 변형 문제", layout="wide")
 
@@ -120,8 +119,8 @@ if selected_tab == "단어":
         ]
 
     
-    vocab_file = st.file_uploader("단어 엑셀 업로드 (xlsx)", type=["xlsx"], key="vocab_word_excel")
-    primary_file = st.file_uploader("초등 문제지 업로드 (docx)", type=["docx"], key="primary_word")
+    vocab_file = st.file_uploader("", type=["xlsx"], key="vocab_word_excel")
+    primary_file = st.file_uploader("", type=["docx"], key="primary_word")
 
     if vocab_file:
         vocab_file.seek(0)
