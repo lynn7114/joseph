@@ -3,7 +3,6 @@ import re
 import pandas as pd
 
 def create_problem_and_answer_docs(gpt_output):
-    # 문제와 정답 분리 (예: "정답:" 이후가 정답 영역이라 가정)
     parts = gpt_output.split("정답:", 1)
     problem_text = parts[0].strip()
     answer_text = parts[1].strip() if len(parts) > 1 else ""
@@ -20,15 +19,14 @@ def create_problem_and_answer_docs(gpt_output):
     for line in answer_text.split("\n"):
         answer_doc.add_paragraph(line)
 
-    # 메모리에 저장
-    problem_buffer = io.BytesIO()
-    answer_buffer = io.BytesIO()
-    problem_doc.save(problem_buffer)
-    answer_doc.save(answer_buffer)
-    problem_buffer.seek(0)
-    answer_buffer.seek(0)
-
-    return problem_buffer, answer_buffer
+    # 메모리에 저장 후 BytesIO 객체 반환
+    problem_io = io.BytesIO()
+    answer_io = io.BytesIO()
+    problem_doc.save(problem_io)
+    answer_doc.save(answer_io)
+    problem_io.seek(0)
+    answer_io.seek(0)
+    return problem_io.getvalue(), answer_io.getvalue()
     
 def extract_units_from_excel(file):
     df = pd.read_excel(file)
