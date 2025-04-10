@@ -182,12 +182,12 @@ if selected_tab == "단어":
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
                                 problem_bytes, answer_bytes = create_problem_and_answer_docs(result)
-                        
-                                
+
                                 unit_number = re.search(r'\d+', unit).group()
+                                
                                 st.download_button(
                                     label="문제 다운로드 (docx)",
-                                    data=problem_io.getvalue(),
+                                    data=problem_bytes,
                                     file_name=f"vocabulary_problem_Unit{unit_number}.docx",
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key=f"{unit}_problem_download"
@@ -195,11 +195,12 @@ if selected_tab == "단어":
                                 
                                 st.download_button(
                                     label="정답 다운로드 (docx)",
-                                    data=answer_io.getvalue(),
+                                    data=answer_bytes,
                                     file_name=f"vocabulary_answer_Unit{unit_number}.docx",
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key=f"{unit}_answer_download"
                                 )
+
 
                             except Exception as e:
                                 st.error(f"오류 발생: {e}")
