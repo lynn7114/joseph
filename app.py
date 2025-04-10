@@ -181,23 +181,22 @@ if selected_tab == "단어":
                                 result = response.choices[0].message.content
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
-                                problem_file, answer_file = create_problem_and_answer_docs(result)
-
+                                problem_bytes, answer_bytes = create_problem_and_answer_docs(result)
+                                
                                 st.download_button(
-                                    label=f"{unit} 문제 다운로드 (docx)",
-                                    data=problem_file,
-                                    file_name=f"{unit}_문제.docx",
-                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                    key=f"{unit}_problem_download"
+                                    label="문제 다운로드 (docx)",
+                                    data=problem_bytes,
+                                    file_name="listening_problem.docx",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                 )
                                 
                                 st.download_button(
-                                    label=f"{unit} 정답 다운로드 (docx)",
-                                    data=answer_file,
-                                    file_name=f"{unit}_정답.docx",
-                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                    key=f"{unit}_answer_download"
+                                    label="정답 다운로드 (docx)",
+                                    data=answer_bytes,
+                                    file_name="listening_answer.docx",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                 )
+
                             except Exception as e:
                                 st.error(f"오류 발생: {e}")
                     else:
