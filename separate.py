@@ -11,7 +11,7 @@ def create_problem_and_answer_docs(gpt_output):
 
     # 문제 문서 생성
     problem_doc = Document()
-    problem_doc.add_heading('Listening 문제', level=1)
+    problem_doc.add_heading('단어 문제', level=1)
     for line in problem_text.split("\n"):
         problem_doc.add_paragraph(line)
 
