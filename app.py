@@ -9,7 +9,7 @@ import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
 from style import set_background, set_custom_fonts
-from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf, extract_units_from_excel, extract_units_from_docx
+from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf, extract_units_from_excel, extract_units_from_docx, create_problem_and_answer_docs
 from pptx import Presentation
 from docx import Document
 
@@ -181,7 +181,23 @@ if selected_tab == "단어":
                                 result = response.choices[0].message.content
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
-                                st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.docx", key=f"{unit}_download")
+                                problem_file, answer_file = create_problem_and_answer_docs(result)
+
+                                st.download_button(
+                                    label=f"{unit} 문제 다운로드 (docx)",
+                                    data=problem_file,
+                                    file_name=f"{unit}_문제.docx",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                    key=f"{unit}_problem_download"
+                                )
+                                
+                                st.download_button(
+                                    label=f"{unit} 정답 다운로드 (docx)",
+                                    data=answer_file,
+                                    file_name=f"{unit}_정답.docx",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                    key=f"{unit}_answer_download"
+                                )
                             except Exception as e:
                                 st.error(f"오류 발생: {e}")
                     else:
