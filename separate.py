@@ -1,6 +1,8 @@
 import fitz  # PyMuPDF
 import re
 import pandas as pd
+from docx import Document
+import io
 
 def create_problem_and_answer_docs(gpt_output):
     parts = gpt_output.split("정답:", 1)
