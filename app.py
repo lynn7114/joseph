@@ -3,6 +3,7 @@ import os
 import json
 import re
 import docx
+import io
 import fitz
 import streamlit as st
 from openai import OpenAI
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 from style import set_background, set_custom_fonts
 from separate import separate_problems, parse_primary_level_questions, extract_units_individually_from_pdf, extract_units_from_excel, extract_units_from_docx
 from pptx import Presentation
+from docx import Document
 
 # 기본 설정
 st.set_page_config(page_title="영어 변형 문제", layout="wide")
