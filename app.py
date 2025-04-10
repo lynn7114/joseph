@@ -182,9 +182,7 @@ if selected_tab == "단어":
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
                                 problem_bytes, answer_bytes = create_problem_and_answer_docs(result)
-                                
-                                problem_doc.save(problem_io)
-                                problem_io.seek(0)
+                        
                                 
                                 unit_number = re.search(r'\d+', unit).group()
                                 st.download_button(
