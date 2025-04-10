@@ -168,23 +168,33 @@ if selected_tab == "단어":
                             "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
                             "문제 형식은 반드시 예시를 따라야 하고, 출력은 100문제로 제한해줘."
                         )
-
+                        
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
-                            try:
-                                response = client.chat.completions.create(
-                                    model="gpt-4o",
-                                    messages=[
-                                        {"role": "system", "content": prompt},
-                                        {"role": "user", "content": context}
-                                    ]
-                                )
-                                result = response.choices[0].message.content
-                                st.success("변형 문제가 생성되었습니다!")
+                                        try:
+                                            response = client.chat.completions.create(
+                                                model="gpt-4o",
+                                                messages=[
+                                                    {"role": "system", "content": prompt},
+                                                    {"role": "user", "content": context}
+                                                ]
+                                            )
+                                            result = response.choices[0].message.content
+                                            st.session_state[session_key] = result  # 세션에 저장
+                                            st.success("변형 문제가 생성되었습니다!")
+                                        except Exception as e:
+                                            st.error(f"오류 발생: {e}")
+                                else:
+                                    st.warning("초등 문제지 파일을 업로드해주세요.")
+                        
+                            # 세션에 저장된 문제 있으면 출력 + 다운로드
+                            if session_key in st.session_state:
+                                result = st.session_state[session_key]
+                                st.markdown("### 생성된 문제:")
                                 st.write(result)
+                        
                                 problem_bytes, answer_bytes = create_problem_and_answer_docs(result)
-
                                 unit_number = re.search(r'\d+', unit).group()
-                                
+                        
                                 st.download_button(
                                     label="문제 다운로드 (docx)",
                                     data=problem_bytes,
@@ -192,7 +202,7 @@ if selected_tab == "단어":
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key=f"{unit}_problem_download"
                                 )
-                                
+                        
                                 st.download_button(
                                     label="정답 다운로드 (docx)",
                                     data=answer_bytes,
@@ -200,14 +210,8 @@ if selected_tab == "단어":
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key=f"{unit}_answer_download"
                                 )
-
-
-                            except Exception as e:
-                                st.error(f"오류 발생: {e}")
-                    else:
-                        st.warning("초등 문제지 파일을 업로드해주세요.")
-    else:
-        st.info("단어 엑셀 파일을 업로드해주세요.")
+                            else:
+                                st.info("단어 엑셀 파일을 업로드해주세요.")
 
 elif selected_tab == "문법":
     st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>문법 문제 생성 (업데이트 예정)</h3>", unsafe_allow_html=True)
