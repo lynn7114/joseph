@@ -179,7 +179,7 @@ if selected_tab == "단어":
                                 result = response.choices[0].message.content
                                 st.success("변형 문제가 생성되었습니다!")
                                 st.write(result)
-                                st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.txt", key=f"{unit}_download")
+                                st.download_button(f"{unit} 문제 다운로드", result, file_name=f"{unit}_문제.docx", key=f"{unit}_download")
                             except Exception as e:
                                 st.error(f"오류 발생: {e}")
                     else:
