@@ -146,72 +146,72 @@ if selected_tab == "단어":
             vocab_data.keys(),
             key=lambda x: int(re.search(r'\d+', x).group())
         )
-
         for unit in unit_list:
             with st.expander(f"{unit} - 문제 생성"):
+                session_key = f"{unit}_problem_result"
+        
                 if st.button(f"{unit} 문제 생성하기", key=unit):
                     if primary_file:
                         primary_file.seek(0)
                         doc = docx.Document(primary_file)
                         primary_example = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
-
+        
                         context = f"""
                         [예시 형식]
                         {primary_example}
-
+        
                         [단어 리스트 - {unit}]
                         {json.dumps(vocab_data[unit], ensure_ascii=False, indent=2)}
                         """
-
+        
                         prompt = (
                             "너는 초등 영어 단어 문제를 만드는 선생님이야. "
                             "주어진 단어 리스트를 활용해, 아래 예시 형식처럼 단어 뜻 고르기, 문장 채우기, 철자 고르기 등의 문제를 만들어줘. "
                             "문제 형식은 반드시 예시를 따라야 하고, 출력은 100문제로 제한해줘."
                         )
-                        
+        
                         with st.spinner(f"{unit} 문제 생성 중입니다..."):
-                                        try:
-                                            response = client.chat.completions.create(
-                                                model="gpt-4o",
-                                                messages=[
-                                                    {"role": "system", "content": prompt},
-                                                    {"role": "user", "content": context}
-                                                ]
-                                            )
-                                            result = response.choices[0].message.content
-                                            st.session_state[session_key] = result  # 세션에 저장
-                                            st.success("변형 문제가 생성되었습니다!")
-                                        except Exception as e:
-                                            st.error(f"오류 발생: {e}")
-                                else:
-                                    st.warning("초등 문제지 파일을 업로드해주세요.")
-                        
-                            # 세션에 저장된 문제 있으면 출력 + 다운로드
-                            if session_key in st.session_state:
-                                result = st.session_state[session_key]
-                                st.markdown("### 생성된 문제:")
-                                st.write(result)
-                        
-                                problem_bytes, answer_bytes = create_problem_and_answer_docs(result)
-                                unit_number = re.search(r'\d+', unit).group()
-                        
-                                st.download_button(
-                                    label="문제 다운로드 (docx)",
-                                    data=problem_bytes,
-                                    file_name=f"vocabulary_problem_Unit{unit_number}.docx",
-                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                    key=f"{unit}_problem_download"
+                            try:
+                                response = client.chat.completions.create(
+                                    model="gpt-4o",
+                                    messages=[
+                                        {"role": "system", "content": prompt},
+                                        {"role": "user", "content": context}
+                                    ]
                                 )
-                        
-                                st.download_button(
-                                    label="정답 다운로드 (docx)",
-                                    data=answer_bytes,
-                                    file_name=f"vocabulary_answer_Unit{unit_number}.docx",
-                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                    key=f"{unit}_answer_download"
-                                )
-                            else:
-                                st.info("단어 엑셀 파일을 업로드해주세요.")
+                                result = response.choices[0].message.content
+                                st.session_state[session_key] = result  # 세션 저장
+                                st.success("변형 문제가 생성되었습니다!")
+                            except Exception as e:
+                                st.error(f"오류 발생: {e}")
+                    else:
+                        st.warning("초등 문제지 파일을 업로드해주세요.")
+        
+                # 저장된 결과가 있으면 출력 및 다운로드 제공
+                if session_key in st.session_state:
+                    result = st.session_state[session_key]
+                    st.markdown("### 생성된 문제:")
+                    st.write(result)
+        
+                    problem_bytes, answer_bytes = create_problem_and_answer_docs(result)
+                    unit_number = re.search(r'\d+', unit).group()
+        
+                    st.download_button(
+                        label="문제 다운로드 (docx)",
+                        data=problem_bytes,
+                        file_name=f"vocabulary_problem_Unit{unit_number}.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key=f"{unit}_problem_download"
+                    )
+        
+                    st.download_button(
+                        label="정답 다운로드 (docx)",
+                        data=answer_bytes,
+                        file_name=f"vocabulary_answer_Unit{unit_number}.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key=f"{unit}_answer_download"
+                    )
+
 
 elif selected_tab == "문법":
     st.markdown("<h3 style='font-family: NanumBarunpenB; color: black;'>문법 문제 생성 (업데이트 예정)</h3>", unsafe_allow_html=True)
