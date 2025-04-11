@@ -2,6 +2,6 @@
 __pycache__/
 *.pyc
 .DS_Store
-.env
-.env
-.env
+.vscode/
+*.pkl
+*.sqlite3
