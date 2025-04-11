@@ -5,3 +5,6 @@ python-pptx
 python-docx
 PyMuPDF
 openpyxl
+fastapi
+uvicorn
+python-multipart
